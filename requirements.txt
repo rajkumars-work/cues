@@ -17,19 +17,32 @@
 # your actual CUDA version, before installing the rest of this file. Versions
 # seen working in different reference environments for this project: 2.9.1
 # (cu129) and 2.7.0 (cu128) — neither is a hard requirement.
+#
+# Everything below is a FLOOR, not an exact pin, and deliberately so: every
+# exact pin originally in this file broke on the first real test machine
+# (2026-11-05) — pymatgen 2026.5.4/pymatgen-core 2026.4.16 need Python >=3.11
+# and failed outright on a 3.10 image; re-pinning huggingface_hub and ase to
+# older exact versions then regressed newer, already-working installs of both
+# (huggingface_hub 1.23.0 -> 1.14.0 broke a diffusers 0.40.0 install; ase
+# 3.29.0 -> 3.28.0 was an unnecessary downgrade). If a package already
+# installed satisfies the floor, leave it alone rather than force pip to
+# match these numbers exactly. `pymatgen`/`pymatgen-core`'s floor reflects the
+# newest version confirmed to still support Python 3.10 (2025.10.7) — don't
+# let pip pull 2026.x on a 3.10 interpreter.
 
-sentencepiece==0.2.2
-transformers==5.13.1
-pandas==2.3.3
-numpy>=1.26          # avoid an exact pin: newer numpy major versions can require
-                     # Python >=3.11, which not every GPU VM image ships
-tqdm==4.67.3
+sentencepiece>=0.2.2
+transformers>=5.13.1
+pandas>=2.3.3
+numpy>=1.26
+tqdm>=4.67.3
 
-# Structure / crystallography (training + eval)
-ase==3.28.0
-pymatgen==2026.5.4
-pymatgen-core==2026.4.16
-spglib==2.7.0
+# Structure / crystallography. dielectric_data (imported by ed_data.py at
+# runtime, not import time) uses pymatgen -- keep it installed even though a
+# plain `import ed_data` alone doesn't reach it.
+ase>=3.28.0
+pymatgen>=2025.10.7
+pymatgen-core>=2025.10.7
+spglib>=2.7.0
 
 # Hugging Face fetch/upload
-huggingface_hub==1.14.0
+huggingface_hub>=1.14.0

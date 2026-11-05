@@ -56,13 +56,21 @@ bash scripts/train_arm.sh ed_lite 0                                    # or ed_c
 
 | Asset | HF repo |
 |---|---|
-| Training corpus (`big_d15_autolabel_binrho_k7.csv`, 219k rows) | [`rajkumars47/data_big_d15`](https://huggingface.co/datasets/rajkumars47/data_big_d15) |
+| Training corpus (`big_d15_autolabel_binrho_k7.csv`, ~242k rows[^corpus-rows]) | [`rajkumars47/data_big_d15`](https://huggingface.co/datasets/rajkumars47/data_big_d15) |
 | ed_control checkpoint (original run) | [`rajkumars47/ckpt_backup_ed_control_12_12_d15`](https://huggingface.co/rajkumars47/ckpt_backup_ed_control_12_12_d15) |
 | ed_lite checkpoint (original run) | [`rajkumars47/ckpt_ed_enclight_6_18`](https://huggingface.co/rajkumars47/ckpt_ed_enclight_6_18) |
 | dec_only checkpoint (original run) | [`rajkumars47/ckpt_dec_only_17L_edim1024_d15_repl`](https://huggingface.co/rajkumars47/ckpt_dec_only_17L_edim1024_d15_repl) |
 
 The checkpoints are the *original* runs this replication is checking — a
 reference to compare a new run against, not required as training input.
+
+[^corpus-rows]: Confirmed 241,741 rows via `wc -l` on the published CSV
+    (2026-11-05). The original design doc's "~219k" figure referred to an
+    earlier copy on a different machine, before the version that was
+    ultimately backed up to this HF repo — the HF dataset card's own
+    description states 242,170 rows for the final backed-up file. Treat
+    ~242k as the authoritative current figure; the small residual difference
+    between 242,170 and 241,741 wasn't investigated further.
 
 ## Status
 

@@ -15,6 +15,13 @@
 #
 # Requires ed_train.py on PYTHONPATH: clone ../steering (see ../SETUP.md) and
 # either export STEERING_PATH yourself or rely on the default below.
+#
+# This script does NOT self-detach. For a real multi-hour/multi-day run that
+# must survive the invoking shell exiting (including a shell a Claude Code
+# tool call spawned and then returned from -- plain `nohup ... &` is not
+# always enough to survive that), launch it fully decoupled:
+#   setsid nohup bash scripts/train_arm.sh ed_lite 0 >/dev/null 2>&1 < /dev/null &
+# (matches the existing internal convention in cues/scripts/nxn/launch_train_resilient.sh)
 set -u
 
 ARM=${1:?"usage: train_arm.sh <ed_control|ed_lite|dec_only> [seed]"}
@@ -30,9 +37,21 @@ SEED=${2:-0}
 : "${PY:=python3}"
 
 export PYTHONUNBUFFERED=1
-export PYTHONPATH="$(cd "$(dirname "$0")/.." && pwd)/${STEERING_PATH#../}:${PYTHONPATH:-}"
+REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Resolve STEERING_PATH (default "../steering/...") relative to REPO_ROOT by
+# actually cd-ing there, rather than string-stripping "../" -- steering is a
+# SIBLING of this repo, not nested inside it, and naive prefix-stripping
+# silently produced a wrong, nonexistent path here before.
+STEERING_ABS="$(cd "$REPO_ROOT/$STEERING_PATH" && pwd)" || {
+  echo "STEERING_PATH does not resolve to a real directory: $REPO_ROOT/$STEERING_PATH" >&2
+  exit 1
+}
+# ed_data.py does `from dielectric_data.reader import ...` -- a top-level
+# import, so code/py/dielectric itself (one level deeper than code/py) must
+# also be on PYTHONPATH, not just code/py.
+export PYTHONPATH="$STEERING_ABS:$STEERING_ABS/dielectric:${PYTHONPATH:-}"
 
-ED_DIR="$STEERING_PATH/ed"
+ED_DIR="$STEERING_ABS/ed"
 if [ ! -f "$ED_DIR/ed_train.py" ]; then
   echo "ed_train.py not found at $ED_DIR/ed_train.py -- clone steering first (see SETUP.md)" >&2
   exit 1
@@ -45,12 +64,12 @@ case "$ARM" in
   *) echo "unknown arm: $ARM (expected ed_control | ed_lite | dec_only)" >&2; exit 1 ;;
 esac
 
-CKPT_ROOT_ABS="$(cd "$(dirname "$0")/.." && pwd)/${CKPT_ROOT#./}"
+CKPT_ROOT_ABS="$REPO_ROOT/${CKPT_ROOT#./}"
 CKPT="$CKPT_ROOT_ABS/${ARM}_s${SEED}"
 LOG="${CKPT}.log"
 mkdir -p "$CKPT_ROOT_ABS"
 
-DATA_CSV_ABS="$(cd "$(dirname "$0")/.." && pwd)/${DATA_CSV#./}"
+DATA_CSV_ABS="$REPO_ROOT/${DATA_CSV#./}"
 
 # Matched across all three arms -- see ../docs/dec_only_17L_replication_design.md §3.
 COMMON_FLAGS="--vocab_size 16000 --lr 5e-5 --warmup_frac 0.15 --grad_clip_norm 0.5 \
