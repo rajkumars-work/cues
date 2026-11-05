@@ -25,6 +25,8 @@ SEED=${2:-0}
 : "${CKPT_ROOT:=./checkpoints}"
 : "${BATCH_SIZE:=24}"   # L4 ceiling for the largest arm (dec_only); raise on bigger GPUs
 : "${EPOCHS:=150}"
+: "${SAVE_INTERVAL:=1000}"  # lower this (e.g. 50) for a quick smoke test that needs to see a checkpoint sooner
+: "${LOG_INTERVAL:=50}"
 : "${PY:=python3}"
 
 export PYTHONUNBUFFERED=1
@@ -54,7 +56,7 @@ DATA_CSV_ABS="$(cd "$(dirname "$0")/.." && pwd)/${DATA_CSV#./}"
 COMMON_FLAGS="--vocab_size 16000 --lr 5e-5 --warmup_frac 0.15 --grad_clip_norm 0.5 \
 --prop_dropout 0.2 --label_dropout 0.0 --max_seq_len 512 --total_batch_size 524288 \
 --epochs $EPOCHS --lr_schedule_epochs $EPOCHS --batch_size $BATCH_SIZE --seed $SEED \
---cond_probe_interval 0 --num_workers 4 --log_interval 50 --save_interval 1000 \
+--cond_probe_interval 0 --num_workers 4 --log_interval $LOG_INTERVAL --save_interval $SAVE_INTERVAL \
 --max_keep_checkpoints 3 --prefix $ARM"
 
 STALL_SEC=900       # once stepping, no log progress this long = genuine stall
