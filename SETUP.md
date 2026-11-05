@@ -75,17 +75,30 @@ hardcoded path (see `eval/path_override.py`'s docstring).
 
 ## Known gaps (as of this scaffolding pass)
 
-- **Smoke-testing in progress (2026-11-05)** on a real external-ish VM
-  (Python 3.10, pre-existing torch 2.9.1+cu129, 9.6GB free disk). Findings so
-  far, fixed here as they're found: the `torch==...+cu128` pin wasn't
-  resolvable from plain PyPI, and `numpy==2.4.4` requires Python >=3.11 — both
-  fixed by relaxing the pins above. Still to confirm: disk headroom with a
-  fresh torch install plus checkpoints, and whether `scripts/train_arm.sh`'s
-  stop instructions actually kill the right process (see below).
-- To stop a run started by `train_arm.sh`, killing only the wrapper script
-  (`pkill -f train_arm.sh`) is **not sufficient** — `ed_train.py` runs as its
-  own background process and will keep holding the GPU. Kill it directly, e.g.
-  `pkill -f "ed_train.py.*--prefix <arm>"`, matching the arm you launched.
+- **Smoke test completed successfully end-to-end (2026-11-05)**, including all
+  the fixes below: cloned both repos, fetched the corpus from HF, trained
+  `ed_lite` to step 50 with a real, monotonically-decreasing loss, saved a
+  genuine checkpoint (3.8GB — includes optimizer + EMA state, not just model
+  weights), and stopped it cleanly. Everything below was found and fixed
+  getting to that point.
+- The vendored `steering` copy of `ed_train.py` doesn't support `--seed` as of
+  this writing (main lineage does) — `train_arm.sh` now probes for this and
+  warns instead of crashing; see its own comment for detail.
+- **To stop a run started by `train_arm.sh`, killing only the wrapper script
+  (`pkill -f train_arm.sh`) is not sufficient** — `ed_train.py` runs as its
+  own background process and will keep holding the GPU. Kill it directly, but
+  avoid a naive `pkill -f "ed_train.py.*--prefix <arm>"` if you're running the
+  kill command itself via a single remote-exec string (e.g.
+  `ssh host "pkill -f ... "`, `gcloud compute ssh --command "..."`) — the
+  invoking process's own command line then *literally contains* the search
+  pattern, so `pkill -f` matches and kills that process too, which can take
+  the whole remote session down (confirmed: this killed an active
+  `gcloud compute ssh` session outright during this smoke test). Use the
+  standard bracket trick to avoid self-matching:
+  `pkill -f "[e]d_train.py.*--prefix <arm>"`. This generalizes beyond this one
+  command: any check/kill run as a single remote-exec string should avoid
+  putting the literal search pattern anywhere else in that same string either
+  (including in an `echo`/fallback message), or it'll self-match there too.
 - `scripts/train_arm.sh`'s watchdog/stall-detection logic is adapted from an
   existing internal launcher (`cues/scripts/nxn/train_supervisor.sh`) but
   simplified for a single continuous run rather than the original's segmented
