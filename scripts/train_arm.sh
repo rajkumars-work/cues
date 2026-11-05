@@ -71,18 +71,29 @@ mkdir -p "$CKPT_ROOT_ABS"
 
 DATA_CSV_ABS="$REPO_ROOT/${DATA_CSV#./}"
 
+# --seed exists in the main ed_train.py lineage but, as of this writing, NOT in
+# the one vendored into the public steering repo (same kind of lineage drift
+# already documented for qk-norm in the design doc) -- probe for it instead of
+# hard-failing if it's missing. If this prints its warning, seeds are not
+# actually controlled for this run; note that in your results.
+cd "$ED_DIR" || exit 1
+SEED_FLAG=""
+if "$PY" ed_train.py --help 2>&1 | grep -q -- '--seed'; then
+  SEED_FLAG="--seed $SEED"
+else
+  echo "WARNING: this ed_train.py build has no --seed flag (vendored steering copy may be behind the main lineage) -- running WITHOUT explicit seed control." >&2
+fi
+
 # Matched across all three arms -- see ../docs/dec_only_17L_replication_design.md §3.
 COMMON_FLAGS="--vocab_size 16000 --lr 5e-5 --warmup_frac 0.15 --grad_clip_norm 0.5 \
 --prop_dropout 0.2 --label_dropout 0.0 --max_seq_len 512 --total_batch_size 524288 \
---epochs $EPOCHS --lr_schedule_epochs $EPOCHS --batch_size $BATCH_SIZE --seed $SEED \
+--epochs $EPOCHS --lr_schedule_epochs $EPOCHS --batch_size $BATCH_SIZE $SEED_FLAG \
 --cond_probe_interval 0 --num_workers 4 --log_interval $LOG_INTERVAL --save_interval $SAVE_INTERVAL \
 --max_keep_checkpoints 3 --prefix $ARM"
 
 STALL_SEC=900       # once stepping, no log progress this long = genuine stall
 STARTUP_GRACE=3000  # tolerate slow tokenizer/startup before the first new step
 MAX_RESTARTS=50
-
-cd "$ED_DIR" || exit 1
 
 is_done() { grep -q "Saved final checkpoint" "$LOG" 2>/dev/null; }
 mtime()   { stat -f %m "$LOG" 2>/dev/null || stat -c %Y "$LOG" 2>/dev/null || echo 0; }
