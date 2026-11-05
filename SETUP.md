@@ -18,11 +18,16 @@ dielectric` resolve from there.
 pip install -r requirements.txt
 ```
 
-This is a curated subset (training + eval deps), not a full lockfile — it's not
-guaranteed to byte-match the environment the original ablation ran in.
-`steering`'s own `crystals/requirements.txt` is the fuller, known-working
-reference for the eval/MLIP-scoring side specifically, if something here doesn't
-resolve cleanly.
+This installs training deps only — torch is deliberately unpinned (see the file's
+own header comment: check for a working CUDA torch already on your machine
+before installing a new one). Install `requirements-eval-optional.txt` separately,
+once training works, only if you need to score checkpoints (it pulls in
+mace-torch/e3nn, which have their own strict torch pins).
+
+Neither file is a full lockfile — not guaranteed to byte-match the environment
+the original ablation ran in. `steering`'s own `crystals/requirements.txt` is a
+fuller, known-working reference for the eval/MLIP-scoring side specifically, if
+something here doesn't resolve cleanly.
 
 ## 3. Fetch data and reference checkpoints
 
@@ -70,13 +75,17 @@ hardcoded path (see `eval/path_override.py`'s docstring).
 
 ## Known gaps (as of this scaffolding pass)
 
-- **Not yet smoke-tested end-to-end** on this exact file layout. Test on a single
-  GPU before handing off to anyone else.
-- `requirements.txt` here is hand-curated, not a lockfile; `ed/`'s own
-  `requirements.txt` (in `steering`'s vendored copy) doesn't pin `torch` at all —
-  the original runs used a specific GCE DLVM image
-  (`pytorch-2-9-cu129-ubuntu-2204-nvidia-580`, PyTorch 2.9.1+cu129). Match the
-  CUDA build to your own hardware.
+- **Smoke-testing in progress (2026-11-05)** on a real external-ish VM
+  (Python 3.10, pre-existing torch 2.9.1+cu129, 9.6GB free disk). Findings so
+  far, fixed here as they're found: the `torch==...+cu128` pin wasn't
+  resolvable from plain PyPI, and `numpy==2.4.4` requires Python >=3.11 — both
+  fixed by relaxing the pins above. Still to confirm: disk headroom with a
+  fresh torch install plus checkpoints, and whether `scripts/train_arm.sh`'s
+  stop instructions actually kill the right process (see below).
+- To stop a run started by `train_arm.sh`, killing only the wrapper script
+  (`pkill -f train_arm.sh`) is **not sufficient** — `ed_train.py` runs as its
+  own background process and will keep holding the GPU. Kill it directly, e.g.
+  `pkill -f "ed_train.py.*--prefix <arm>"`, matching the arm you launched.
 - `scripts/train_arm.sh`'s watchdog/stall-detection logic is adapted from an
   existing internal launcher (`cues/scripts/nxn/train_supervisor.sh`) but
   simplified for a single continuous run rather than the original's segmented

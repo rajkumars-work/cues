@@ -1,13 +1,28 @@
-# Curated subset for training + eval (not a full lockfile).
-# Pins match steering/crystals/requirements.txt where overlapping, for consistency
-# with the eval/scoring code vendored there.
+# Curated subset for TRAINING only (not a full lockfile). MLIP-scoring/eval
+# extras (mace-torch, e3nn) are in requirements-eval-optional.txt — they're not
+# needed to launch training and have their own strict, easily-conflicting torch
+# version requirements, so they're kept separate (same split steering/crystals/
+# uses: requirements.txt vs. requirements_3mlip_optional.txt).
+#
+# torch is deliberately NOT pinned here. +cuXXX build tags (as seen in some
+# reference environments) are PyTorch's own local version tags and are not
+# resolvable from plain PyPI — pip fails outright on them without also pointing
+# at https://download.pytorch.org/whl/<cuXXX>. Check for a working CUDA torch
+# already on your machine first (common on GPU VM images):
+#
+#   python3 -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+#
+# If that works, leave it alone and just install the rest of this file. If not,
+# install torch yourself per https://pytorch.org/get-started/locally/, matching
+# your actual CUDA version, before installing the rest of this file. Versions
+# seen working in different reference environments for this project: 2.9.1
+# (cu129) and 2.7.0 (cu128) — neither is a hard requirement.
 
-# Training (see ed/requirements.txt in the companion steering repo)
-torch==2.7.0+cu128
 sentencepiece==0.2.2
 transformers==5.13.1
 pandas==2.3.3
-numpy==2.4.4
+numpy>=1.26          # avoid an exact pin: newer numpy major versions can require
+                     # Python >=3.11, which not every GPU VM image ships
 tqdm==4.67.3
 
 # Structure / crystallography (training + eval)
@@ -15,10 +30,6 @@ ase==3.28.0
 pymatgen==2026.5.4
 pymatgen-core==2026.4.16
 spglib==2.7.0
-
-# MLIP scoring (screening.py / combined.py)
-mace-torch==0.3.15
-e3nn==0.4.4
 
 # Hugging Face fetch/upload
 huggingface_hub==1.14.0

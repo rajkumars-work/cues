@@ -1,0 +1,7 @@
+# MLIP-scoring extras for dielectric/eval/screening.py and combined.py — only
+# needed to SCORE generated structures, not to train. Kept separate from
+# requirements.txt because these have strict, easily-conflicting torch pins;
+# install only once you know which torch you've landed on from requirements.txt.
+
+mace-torch==0.3.15
+e3nn==0.4.4
