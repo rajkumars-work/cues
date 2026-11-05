@@ -73,6 +73,33 @@ and `RESULTS.md`. Set `ED_CHECKPOINTS=/path/to/your/checkpoints` as an
 environment variable before running, or it defaults to the original author's
 hardcoded path (see `eval/path_override.py`'s docstring).
 
+## 6. Report results back
+
+You almost certainly do **not** have push access to this repo directly — don't
+assume it. Two options, in order of preference:
+
+1. **Fork + pull request (preferred).** Fork `rajkumars-work/cues` to your own
+   GitHub account, push your results (a report, logs, anything small — not
+   checkpoints, see below) to a branch on your fork, and open a pull request
+   against this repo. This is the normal open-source contribution flow and
+   needs nothing from the maintainer in advance. If you don't already have git
+   push credentials configured for your own GitHub account on the machine
+   you're running on, set those up first (an SSH key or a personal access
+   token) — this is independent of anything in this repo.
+2. **Relay directly, if you'd rather not set up git credentials for a one-off
+   run.** Write your report (plain markdown is fine) and send it to the
+   maintainer however you're already in contact with them — paste it into a
+   shared conversation, email it, whatever's already working. Confirmed to
+   work in practice: the smoke test in `smoketests/ed_lite_20261105.md` was
+   returned exactly this way.
+
+**Checkpoints are large (hundreds of MB to several GB) — don't try to put them
+in a git branch or PR either way.** Upload large files to your own Hugging Face
+account (`huggingface_hub.upload_folder`/`upload_file`, same pattern as
+`scripts/fetch_assets.sh` uses to download) and just link the HF repo in your
+report. Don't request or expect write access to the `rajkumars47` HF account —
+host large files under your own account instead.
+
 ## Known gaps (as of this scaffolding pass)
 
 - **Smoke test completed successfully end-to-end (2026-11-05)**, including all
