@@ -1,0 +1,24 @@
+# Curated subset for training + eval (not a full lockfile).
+# Pins match steering/crystals/requirements.txt where overlapping, for consistency
+# with the eval/scoring code vendored there.
+
+# Training (see ed/requirements.txt in the companion steering repo)
+torch==2.7.0+cu128
+sentencepiece==0.2.2
+transformers==5.13.1
+pandas==2.3.3
+numpy==2.4.4
+tqdm==4.67.3
+
+# Structure / crystallography (training + eval)
+ase==3.28.0
+pymatgen==2026.5.4
+pymatgen-core==2026.4.16
+spglib==2.7.0
+
+# MLIP scoring (screening.py / combined.py)
+mace-torch==0.3.15
+e3nn==0.4.4
+
+# Hugging Face fetch/upload
+huggingface_hub==1.14.0
