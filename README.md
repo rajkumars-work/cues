@@ -16,6 +16,11 @@ same corpus:
 Background and exactly what question this settles:
 [`docs/dec_only_17L_replication_design.md`](docs/dec_only_17L_replication_design.md).
 
+**Running this as a real experiment (not just trying it out)?** Start at
+[`docs/HANDOFF_C2_C3.md`](docs/HANDOFF_C2_C3.md) instead of the quick start
+below — it has the full launch (all three arms × two seeds, multi-GPU
+guidance), scoring, and results-reporting template.
+
 ## What's here vs. what's in `steering`
 
 Most of the actual model/training code already lives, public, in the companion
@@ -74,8 +79,10 @@ reference to compare a new run against, not required as training input.
 
 ## Status
 
-Repo scaffolding for an external-GPU-compute handoff. Not yet smoke-tested
-end-to-end on this exact file layout — see `SETUP.md`'s "Known gaps" section.
+Smoke-tested successfully end-to-end on a single external L4 GPU
+(2026-11-05) — see [`smoketests/ed_lite_20261105.md`](smoketests/ed_lite_20261105.md)
+for what was validated and the bugs found and fixed along the way. Ready for
+a real full-scale run; see [`docs/HANDOFF_C2_C3.md`](docs/HANDOFF_C2_C3.md).
 
 ## License
 
