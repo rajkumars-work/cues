@@ -1,6 +1,6 @@
 # Handoff: reproducing the diffusion-vs-autoregressive comparison
 
-**Priority: LOW — nice-to-have, not blocking.** The paper's design decision
+**Priority: NICE — not blocking.** The paper's design decision
 (autoregressive, not diffusion) is already well-evidenced by a broader lineage
 (see "Already-supported claim" below); nothing here is required to defend
 that decision. This doc exists only because we want every claimed number to

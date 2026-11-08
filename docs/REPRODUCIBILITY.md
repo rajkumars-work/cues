@@ -27,10 +27,12 @@ flag that a reconstruction recipe needs to be written down, even if nobody
 has run it yet.
 
 **2. Not every gap gets the same urgency, and that's fine — but every gap
-gets *something*.** A result the paper's central thesis depends on
-(`limitations.md`'s MUST/SHOULD items — the architecture ablation, the
-corpus-stability ablation) gets a fully worked, ready-to-run handoff package,
-because the thesis shouldn't stand on an irreproducible number. A result
+gets *something*.** A result this matters to (`EXPERIMENTS.md`'s Must/Should
+tiers — currently the near-equilibrium benchmark rebuild and the
+corpus-stability ablation; priorities are re-triaged as the paper's actual
+argument changes, so check that index rather than assuming this list stays
+fixed) gets a fully worked, ready-to-run handoff package, because the paper
+shouldn't ship an unresolved or irreproducible number at that tier. A result
 that's secondary, historical, or a side-curiosity (the NxN matrix's
 underlying checkpoints, the abandoned diffusion lineage, an informal
 fine-tuning account, an incomplete DPO side-experiment) still gets a written

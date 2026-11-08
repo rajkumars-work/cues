@@ -1,7 +1,7 @@
 # Handoff: publishing the production checkpoint's own training corpus
 
-**Priority: NICE — doesn't touch the thesis, but this is the cheapest real
-gap in this entire repo to close.** No training, no retraining, not even a
+**Priority: REPRODUCIBILITY — doesn't touch the thesis, but this is the
+cheapest real gap in this entire repo to close.** No training, no retraining, not even a
 measurement re-run: the checkpoint already exists, already works, and is
 already in day-to-day use. What's missing is a public copy of the file it
 was trained on, plus two citation fixes. If you only have twenty minutes,

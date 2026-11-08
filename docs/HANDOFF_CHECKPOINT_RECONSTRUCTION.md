@@ -1,6 +1,7 @@
 # Handoff: reconstructing evidence that rests on checkpoints we no longer have
 
-**Priority: LOW — nice-to-have, not blocking.** Nothing in this doc is
+**Priority: REPRODUCIBILITY — not an evidentiary gap, just artifact
+availability, and not blocking.** Nothing in this doc is
 required for the paper's central thesis. It exists so that results currently
 described as "historical record, not independently re-runnable" can become
 independently re-runnable, for anyone with spare compute who wants to do it.

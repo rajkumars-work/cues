@@ -1,5 +1,10 @@
 # Handoff: the A5 wide-vs-narrow corpus ablation
 
+**Priority: MUST — tracked as a real paper limitation
+(`cues/docs/limitations.md` item 2).** The underlying claim isn't in
+doubt (indirect NxN evidence already supports it), but this is the one
+dedicated test that would make it direct rather than inferred.
+
 **You have no prior context — read this whole file before touching anything.**
 This is a real experiment for the CUES paper (Crystals Using Exemplar
 Steering), not a test. If anything below doesn't match what you observe, stop

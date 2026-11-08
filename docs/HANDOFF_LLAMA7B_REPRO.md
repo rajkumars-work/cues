@@ -1,11 +1,15 @@
 # Handoff: reproducing the large-model fine-tuning comparison
 
-**Priority: LOW — nice-to-have, not blocking.** The paper's design decision
-(train a task-sized model from scratch rather than fine-tune a much larger
-pretrained model) doesn't depend on a precise, controlled number — the
-qualitative finding alone is sufficient and already in hand. This exists so
-the finding can eventually move from "informal account" to "independently
-reproducible," for anyone with the infrastructure to do it.
+**Priority: MUST — this gap is tracked as a real paper limitation
+(`cues/docs/limitations.md` item 1), unlike most other items in this index.**
+That said, closing it is not urgent: the paper's design decision (train a
+task-sized model from scratch rather than fine-tune a much larger pretrained
+model) doesn't depend on a precise, controlled number — the qualitative
+finding alone is sufficient and already in hand, and stated as a limitation
+rather than overclaimed. This doc exists so the finding can eventually move
+from "informal account" to "independently reproducible," for anyone with the
+infrastructure to do it — but the E3 engineering cost below is real, and
+rushing this isn't recommended.
 
 **You have no prior context — read this whole file before touching
 anything.**

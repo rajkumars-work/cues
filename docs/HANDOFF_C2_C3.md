@@ -1,5 +1,12 @@
 # Handoff: the C2/C3 architecture ablation
 
+**Priority: NICE — not blocking, downgraded from MUST on 2026-11-04.**
+Neither baseline this experiment compares (decoder-only, naive 12+12) is
+the architecture this paper recommends, so resolving the comparison either
+way doesn't change the paper's argument. No longer in
+`cues/docs/limitations.md` — worth running if compute is free, not
+something this paper's conclusions wait on.
+
 **You have no prior context — read this whole file before touching anything.**
 This is a real experiment for the CUES paper (Crystals Using Exemplar Steering),
 not a test. If anything below doesn't match what you observe, stop and report

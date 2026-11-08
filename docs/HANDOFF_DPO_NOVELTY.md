@@ -1,10 +1,11 @@
 # Handoff: completing the DPO-for-novelty experiment
 
-**Priority: LOW — nice-to-have, not blocking.** This doesn't touch the
-paper's central thesis either way — it's an open side-question about whether
-a cheap post-hoc fine-tune can improve one specific metric (novelty) without
-hurting another (structural quality). Of this repo's four nice-to-have
-items, this is the cheapest and most concretely specified.
+**Priority: REPRODUCIBILITY — not an evidentiary gap, just unfinished work,
+and not blocking.** This doesn't touch the paper's central thesis either
+way — it's an open side-question about whether a cheap post-hoc fine-tune
+can improve one specific metric (novelty) without hurting another
+(structural quality). Of this repo's four Reproducibility-tier items, this
+is the cheapest and most concretely specified.
 
 **You have no prior context — read this whole file before touching
 anything.**

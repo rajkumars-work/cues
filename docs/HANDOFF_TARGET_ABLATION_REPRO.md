@@ -1,6 +1,7 @@
 # Handoff: reproducing the build-order and scratchpad-field ablations
 
-**Priority: LOW — nice-to-have, not blocking.** Nothing here is required for
+**Priority: REPRODUCIBILITY — not an evidentiary gap, just artifact
+availability, and not blocking.** Nothing here is required for
 the paper's central thesis; §9.4/§9.5's conclusions are stated plainly and
 aren't in dispute. This exists because the specific checkpoints behind these
 two sections were never individually audited for survival, unlike the
