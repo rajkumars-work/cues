@@ -112,7 +112,14 @@ STARTUP_GRACE=3000  # tolerate slow tokenizer/startup before the first new step
 MAX_RESTARTS=50
 
 is_done() { grep -q "Saved final checkpoint" "$LOG" 2>/dev/null; }
-mtime()   { stat -f %m "$LOG" 2>/dev/null || stat -c %Y "$LOG" 2>/dev/null || echo 0; }
+mtime()   { stat -c %Y "$LOG" 2>/dev/null || stat -f %m "$LOG" 2>/dev/null || echo 0; }
+# GNU stat (Linux) first: GNU's `-f` means "filesystem mode", not "format" --
+# `stat -f %m "$LOG"` on Linux doesn't fail, it silently prints a filesystem
+# info block (starting "  File: ...") instead of a timestamp, which then
+# corrupts `age=$(( $(date +%s) - $(mtime) ))`'s arithmetic and crashes this
+# whole script under `set -u` ("File: unbound variable") -- found running a
+# real sequential (single-GPU) A5 launch, 2026-11-08. BSD stat (macOS) is the
+# fallback since it actually fails cleanly there when given GNU's `-c` flag.
 
 for attempt in $(seq 1 $MAX_RESTARTS); do
   if is_done; then echo "=== [train_arm $ARM s$SEED] DONE ===" | tee -a "$LOG"; break; fi
