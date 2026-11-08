@@ -38,8 +38,10 @@ real problems, not one:
 Put together: the single checkpoint this paper repeatedly holds up as the
 reproducible one has a wrong citation for its weights and no public copy at
 all of the data that produced them. Nothing about the paper's *results* is
-in question — this is the same kind of gap as `limitations.md` items 6/7:
-the finding stands, the artifact trail has a hole.
+in question — this is the same kind of gap as `experiments_todo.md`'s
+Reproducibility items R1/R2 (this is R3): the finding stands, the artifact
+trail has a hole. It isn't filed as a paper limitation at all, for exactly
+that reason — see that section's own note on why.
 
 ## Why this is cheap, not a research problem
 

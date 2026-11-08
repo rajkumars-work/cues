@@ -49,7 +49,7 @@ avoid mode collapse, which an earlier, more aggressive attempt hit):
 
 **Base checkpoint:** use the current production checkpoint, public on HF at
 `rajkumars47/cues-alex-nolemat-lowhull` (not `ckpt_alex_nolemat_lowhull`,
-which doesn't resolve — see `limitations.md` item 8), rather than the
+which doesn't resolve — see `experiments_todo.md`'s Reproducibility section, R3), rather than the
 original design's now-superseded checkpoint — same fine-tune recipe, current
 base model, so the result is about something the paper still stands behind.
 

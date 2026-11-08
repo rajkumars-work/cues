@@ -20,23 +20,41 @@ design/handoff doc pair for the experiment you're running.
 
 These don't gate anything the paper argues — see each item's own
 `limitations.md` text for why — but per `REPRODUCIBILITY.md`, every gap gets
-a written plan, not just the urgent ones.
+a written plan, not just the urgent ones. Unlike the Reproducibility table
+below, these are genuine (if secondary) evidentiary gaps — the underlying
+evidence really is informal or unrecoverable, not just an artifact that
+became hard to get hold of after the fact.
 
 | `limitations.md` item | Gap | Docs |
 |---|---|---|
 | 2 | Original in-house diffusion-vs-transformer comparison is unrecoverable (no surviving checkpoints/data) | [`HANDOFF_DIFFUSION_REPRO.md`](HANDOFF_DIFFUSION_REPRO.md) |
 | 3 | Large-model (~7B) fine-tuning comparison rests on an informal, qualitative account | [`HANDOFF_LLAMA7B_REPRO.md`](HANDOFF_LLAMA7B_REPRO.md) |
-| 6 | The NxN data-ablation matrix's underlying checkpoints, and several exemplar-steering/composition-fidelity numbers, rest on checkpoints with no surviving weights | [`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](HANDOFF_CHECKPOINT_RECONSTRUCTION.md) |
-| 7 | A second DPO experiment (targeting generation novelty) was designed and partially run but never completed to a citable result | [`HANDOFF_DPO_NOVELTY.md`](HANDOFF_DPO_NOVELTY.md) |
-| 8 | The production checkpoint's own training corpus was never published, and one checkpoint citation in this repo pointed to the wrong HF repo name | [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md) |
-| 9 | The build-order (§9.4) and scratchpad-field (§9.5) ablations rest on dedicated checkpoints never individually audited for survival | [`HANDOFF_TARGET_ABLATION_REPRO.md`](HANDOFF_TARGET_ABLATION_REPRO.md) |
 
 Item 5 has no handoff package because it needs no external collaborator's
 GPU time at all (self-serve, per the quoted reasoning above) — it's the one
-entry in either tier without a `HANDOFF_*.md`. Item 8 is the cheapest entry
-in this entire table — no training or retraining at all, just a filter
-script already specified elsewhere in this repo and two corrected
-citations.
+blocking-tier entry without a `HANDOFF_*.md`.
+
+## Reproducibility — artifact availability, not an evidentiary gap
+
+**[Moved here 2026-11-08.]** These four used to be `limitations.md` items
+6/7/8/9 — moved out because none of them weaken any claim the paper makes:
+in every case the result stands, and what's missing is purely a reader's
+ability to independently obtain the checkpoint or dataset that produced it
+(or, for R2, an experiment that was simply never finished). They're tracked
+as R1–R4 in `experiments_todo.md`'s own "Reproducibility" section, not in
+the paper's Limitations/Appendix A at all — this table is the public mirror
+of that section.
+
+| Tracked as | Gap | Docs |
+|---|---|---|
+| R1 | The NxN data-ablation matrix's underlying checkpoints, and several exemplar-steering/composition-fidelity numbers, rest on checkpoints with no surviving weights | [`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](HANDOFF_CHECKPOINT_RECONSTRUCTION.md) |
+| R2 | A second DPO experiment (targeting generation novelty) was designed and partially run but never completed to a citable result | [`HANDOFF_DPO_NOVELTY.md`](HANDOFF_DPO_NOVELTY.md) |
+| R3 | The production checkpoint's own training corpus was never published, and one checkpoint citation in this repo pointed to the wrong HF repo name | [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md) |
+| R4 | The build-order (§9.4) and scratchpad-field (§9.5) ablations rest on dedicated checkpoints never individually audited for survival | [`HANDOFF_TARGET_ABLATION_REPRO.md`](HANDOFF_TARGET_ABLATION_REPRO.md) |
+
+R3 is the cheapest entry in this entire repo — no training or retraining at
+all, just a filter script already specified elsewhere in this repo and two
+corrected citations.
 
 ## Running an experiment
 
@@ -59,13 +77,14 @@ If you're running both, note the efficiency overlap documented in the A5
 design doc §2: a C2/C3 `ed_lite` run on the full wide corpus already covers
 A5's secondary (full-wide) arm — don't train it twice.
 
-The nice-to-have items are each a self-contained `HANDOFF_*.md` with no
-companion design doc (lower priority warrants less scaffolding, not less
-honesty) — each states its own priority, exactly what's missing, and either
-a ready-to-run recipe or an honest statement of what engineering would need
-to exist first. `HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` (item 8) is the
-cheapest thing in this entire repo to pick up — no training, no retraining,
-not even a measurement re-run, just a filter script and two citation fixes.
-`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`'s "Part B" is the next cheapest: no
-training at all, just re-running existing measurements on a checkpoint that
-already exists.
+Every item in both the nice-to-have and reproducibility tables is a
+self-contained `HANDOFF_*.md` with no companion design doc (lower priority
+warrants less scaffolding, not less honesty) — each states its own
+priority, exactly what's missing, and either a ready-to-run recipe or an
+honest statement of what engineering would need to exist first.
+`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` (R3) is the cheapest thing in
+this entire repo to pick up — no training, no retraining, not even a
+measurement re-run, just a filter script and two citation fixes.
+`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`'s "Part B" (part of R1) is the next
+cheapest: no training at all, just re-running existing measurements on a
+checkpoint that already exists.
