@@ -107,9 +107,17 @@ COMMON_FLAGS="--vocab_size 16000 --lr 5e-5 --warmup_frac 0.15 --grad_clip_norm 0
 # cold-start reproducibility test (2026-11-08) that ran long enough to hit
 # it -- the two prior smoke tests stopped at 50 steps and never would have.
 
-STALL_SEC=900       # once stepping, no log progress this long = genuine stall
-STARTUP_GRACE=3000  # tolerate slow tokenizer/startup before the first new step
+: "${STALL_SEC:=1800}"      # once stepping, no log progress this long = genuine stall
+: "${STARTUP_GRACE:=3000}"  # tolerate slow tokenizer/startup before the first new step
 MAX_RESTARTS=50
+# STALL_SEC was a hardcoded 900 (not overridable) until a real A5 (ed_lite,
+# batch_size 24, grad_accum 42) run on a single L4 GPU hit it as a false
+# positive, repeatedly: one real training step there takes ~920s, so the
+# watchdog killed the run every single time right before step 2 could log,
+# looping forever at "step 1" without ever making progress. 1800s gives
+# headroom above that measured per-step time; raise further via the env var
+# for a bigger arm/grad_accum/slower-GPU combination instead of editing this
+# file. Found 2026-11-08.
 
 is_done() { grep -q "Saved final checkpoint" "$LOG" 2>/dev/null; }
 mtime()   { stat -c %Y "$LOG" 2>/dev/null || stat -f %m "$LOG" 2>/dev/null || echo 0; }
