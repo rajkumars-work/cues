@@ -81,15 +81,31 @@ SEED_FLAG=""
 if "$PY" ed_train.py --help 2>&1 | grep -q -- '--seed'; then
   SEED_FLAG="--seed $SEED"
 else
-  echo "WARNING: this ed_train.py build has no --seed flag (vendored steering copy may be behind the main lineage) -- running WITHOUT explicit seed control." >&2
+  # Write to both stderr AND the log file directly -- the documented launch
+  # command (setsid nohup ... >/dev/null 2>&1 < /dev/null &) discards this
+  # process's own stderr, so a plain `>&2` here is invisible to anyone
+  # following the docs exactly. $LOG is defined above and safe to append to
+  # before ed_train.py's own output starts.
+  echo "WARNING: this ed_train.py build has no --seed flag (vendored steering copy may be behind the main lineage) -- running WITHOUT explicit seed control." | tee -a "$LOG" >&2
 fi
 
 # Matched across all three arms -- see ../docs/dec_only_17L_replication_design.md §3.
 COMMON_FLAGS="--vocab_size 16000 --lr 5e-5 --warmup_frac 0.15 --grad_clip_norm 0.5 \
 --prop_dropout 0.2 --label_dropout 0.0 --max_seq_len 512 --total_batch_size 524288 \
---epochs $EPOCHS --lr_schedule_epochs $EPOCHS --batch_size $BATCH_SIZE $SEED_FLAG \
+--epochs $EPOCHS --lr_schedule_epochs $EPOCHS --max_steps 0 --batch_size $BATCH_SIZE $SEED_FLAG \
 --cond_probe_interval 0 --num_workers 4 --log_interval $LOG_INTERVAL --save_interval $SAVE_INTERVAL \
 --max_keep_checkpoints 3 --prefix $ARM"
+# --max_steps 0 is load-bearing, not cosmetic: ed_train.py's own default is
+# --max_steps 4000 (a short-run default meant to be overridden), and 0 is its
+# documented way to derive the real step budget from --epochs instead
+# ("max_steps = args.max_steps if args.max_steps > 0 else steps_per_epoch *
+# args.epochs"). Without this flag, every run launched by this script
+# silently stopped at step 4000 regardless of --epochs -- about 28 of the
+# intended 150 epochs, with the LR schedule (anchored to 150 epochs via
+# --lr_schedule_epochs) still near its peak, while the watchdog's "Saved
+# final checkpoint" / DONE check made the run look complete. Found via a
+# cold-start reproducibility test (2026-11-08) that ran long enough to hit
+# it -- the two prior smoke tests stopped at 50 steps and never would have.
 
 STALL_SEC=900       # once stepping, no log progress this long = genuine stall
 STARTUP_GRACE=3000  # tolerate slow tokenizer/startup before the first new step

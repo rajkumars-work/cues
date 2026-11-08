@@ -108,13 +108,30 @@ reference to compare a new run against, not required as training input.
 
 ## Status
 
+**Before anything else, run `bash scripts/quick_selftest.sh`** (under a
+minute on a GPU machine) — it's a fast, repeatable plumbing check (tokenizer,
+data, training steps, checkpoint save) meant to catch environment problems
+before you commit real GPU time to an experiment. See `SETUP.md` for detail.
+
 The base plumbing (clone, fetch, train, checkpoint) was smoke-tested
 successfully end-to-end on a single external L4 GPU (2026-11-05) — see
 [`smoketests/ed_lite_20261105.md`](smoketests/ed_lite_20261105.md) for what
 was validated and the bugs found and fixed along the way. The A5 corpus path
 specifically has its own, narrower smoke test — see the most recent
-`smoketests/ed_lite_lowhull_*.md` entry. Both experiments are ready for a
-real full-scale run; see [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md).
+`smoketests/ed_lite_lowhull_*.md` entry.
+
+**A cold-start test (2026-11-08) — an independent session given no context
+beyond this repo, trying to actually run an experiment — found and led to
+fixing a real correctness bug:** `train_arm.sh` wasn't overriding
+`ed_train.py`'s default step cap, so a "full, 150-epoch" run was silently
+stopping around 28 epochs with the LR schedule nowhere near decayed, while
+still reporting as complete. Fixed and verified on real hardware; see
+`SETUP.md`'s "Known gaps" for detail, and that same test's findings for
+several smaller fixes (a disk-space wall in `fetch_assets.sh`, a `--seed`
+warning that went nowhere, undocumented single-GPU guidance for A5, and
+`HANDOFF_CHECKPOINT_RECONSTRUCTION.md` citing files that weren't actually
+public). With those fixed, C2/C3 and A5 are ready for a real full-scale run;
+see [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md).
 
 ## License
 

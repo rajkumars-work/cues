@@ -53,7 +53,10 @@ substitute for the size-matched one.
 
 Follow [`../SETUP.md`](../SETUP.md) steps 1–3 (clone `steering` alongside this
 repo, install dependencies, fetch the training corpus) if you haven't already
-— same corpus as C2/C3, don't fetch it twice if a C2/C3 run already did.
+— same corpus as C2/C3, don't fetch it twice if a C2/C3 run already did. **A5
+doesn't use the three reference checkpoints C2/C3 needs** — use `bash
+scripts/fetch_assets.sh --corpus-only ./data` instead of the plain form in
+step 3 to skip ~14GB you don't need here.
 
 ## Build the two A5 corpora
 
@@ -91,6 +94,13 @@ label, not a meaningful distinction between the two corpora; it's just there
 so the two runs don't collide on the same checkpoint prefix. Use whichever
 seed numbering you like, including matching seeds across both arms, as long
 as the two runs don't share a `<arm>_s<seed>` checkpoint name.)
+
+**Only one GPU?** The two launches above assume two separate GPUs
+(`CUDA_VISIBLE_DEVICES=0` / `=1`) running in parallel. On a single GPU, run
+them sequentially instead — drop `CUDA_VISIBLE_DEVICES` entirely (or set both
+to `0`) and launch the narrow arm, wait for it to finish, then launch the
+wide-matched arm. Don't run both at once on one GPU; use whichever `BATCH_SIZE`
+fits (see below) and budget roughly double the wall-clock time of a single run.
 
 `setsid ... < /dev/null &` matters — see `SETUP.md`'s note on this (a run that
 dies when your shell exits is a real, previously-hit failure mode).

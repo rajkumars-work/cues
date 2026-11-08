@@ -29,6 +29,22 @@ the original ablation ran in. `steering`'s own `crystals/requirements.txt` is a
 fuller, known-working reference for the eval/MLIP-scoring side specifically, if
 something here doesn't resolve cleanly.
 
+**Before going further, run the quick self-test:**
+
+```bash
+bash scripts/quick_selftest.sh
+```
+
+Takes under a minute on a GPU machine. It exercises the exact same code path
+(tokenizer training, data loading, optimizer steps, checkpoint saving) a real
+experiment uses, but on a tiny 2000-row data slice and a toy architecture, so
+it catches environment/plumbing problems — a bad dependency pin, a disk-space
+wall, a broken training flag — before you commit real GPU time to anything in
+`EXPERIMENTS.md`. A 2026-11-08 cold-start test hit several real bugs this
+would have caught in seconds instead of after a multi-hour run; if this
+script fails, fix that before attempting any real experiment below, since a
+real run will fail the same way after costing much more time to find out.
+
 ## 3. Fetch data and reference checkpoints
 
 ```bash
@@ -37,6 +53,10 @@ bash scripts/fetch_assets.sh ./data
 
 Pulls the training corpus and the three original architecture-ablation
 checkpoints from Hugging Face (all public — see the main README's table).
+**This is ~14GB total.** If you only need the training corpus (e.g. for A5,
+which doesn't use the reference checkpoints at all) or have limited disk,
+use `bash scripts/fetch_assets.sh --corpus-only ./data` instead — confirmed
+necessary on an 8GB-free VM during a 2026-11-08 cold-start test.
 
 ## 4. Train one arm
 
@@ -131,3 +151,32 @@ host large files under your own account instead.
   simplified for a single continuous run rather than the original's segmented
   per-epoch respawn — see the design doc §5.2 for why segmented respawns are
   specifically the thing to avoid (they caused two real LR-schedule bugs).
+- **Fixed 2026-11-08, found by a cold-start reproducibility test:**
+  `train_arm.sh` was launching every run with `ed_train.py`'s hardcoded
+  default `--max_steps 4000` in effect (never overridden), so a "full,
+  150-epoch" run actually stopped around 28 epochs (~19%) with the LR
+  schedule still near its peak, while still reporting as a clean, complete
+  run. Now passes `--max_steps 0`, `ed_train.py`'s own documented way to
+  derive the real step budget from `--epochs` instead. Verified on real
+  hardware (a single L4): the diagnostic line now reads `max_steps:32250`
+  for a 150-epoch `ed_lite` run, matching this project's own historical
+  `dec_only_17L_repl` checkpoint's actual training length, instead of the
+  previous `max_steps:4000`. **If you've previously treated any checkpoint
+  trained via this script's pre-fix version as a complete 150-epoch run, it
+  likely wasn't — re-check against its log's own `max_steps:` line.**
+- **Also fixed 2026-11-08:** the `--seed`-unsupported warning (above) used to
+  go only to this script's own stderr, which the documented launch command
+  discards (`>/dev/null 2>&1`) — now also written into the run's own log
+  file, so it's visible however you end up reading the run's output.
+- **Open question, not yet resolved (found 2026-11-08):** a short training
+  run surfaced `ed_train.py`'s own runtime warning — "Target/source ratio
+  13x > 10x but --encoder_lr_scale is 1.0 ... Consider --encoder_lr_scale
+  0.27" — for `ed_lite`'s actual token-ratio. `--encoder_lr_scale` defaults
+  to `1.0` (no scaling) and `train_arm.sh` never sets it. Whether this
+  project's own historical `ed_lite` results were trained with this
+  unaddressed, and whether applying the suggested scale would change
+  anything material, hasn't been checked — flagging rather than changing the
+  default, since this could affect comparability with already-published
+  numbers if changed without checking first. The warning's own pointer to an
+  `ARCHITECTURE.md` for more detail doesn't resolve to a file anywhere in
+  this repo or `steering`, for what that's worth.

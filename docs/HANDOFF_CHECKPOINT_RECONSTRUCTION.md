@@ -152,21 +152,56 @@ just generation + scoring on a checkpoint already in hand.
 
 ### What to run
 
-1. Pick one current checkpoint (recommend `ckpt_alex_nolemat_lowhull`, the
-   production one, for consistency with the rest of the paper going
-   forward).
-2. Steerability baseline: generate against the same property axes (band gap,
-   dielectric, density, element set, atom count) and compute agreement the
-   same way `experimental_design.md §6.4` describes.
-3. Composition-fidelity reference: n=50 generations, check element-faithful
-   and exact-atom-count rates, same protocol as `experiments.md §9.2`.
-4. §8.1–§8.4: re-run each of the four target-kind experiments (tacit
-   intuition, Pareto-front, disjunction, joint-target) on the new checkpoint,
-   same seed pools and methodology each section already documents.
-5. §11.4's per-prompt steerability-prediction check: re-run the SUN-driver
-   base-rate and composition-rarity analysis (`analysis.md §11.4`'s AUC ≤
-   0.56 finding) on the new checkpoint's generations — same `chem/sun_predictor`
-   methodology, no new code needed.
+**Note on sourcing (added 2026-11-08):** steps 2–5 below used to just point at
+section numbers in this project's private paper drafts
+(`experimental_design.md`, `experiments.md`, `analysis.md`) — not usable by
+anyone without access to those files. The methodology each needs is inlined
+below instead; a 2026-11-08 cold-start test confirmed this was a real,
+blocking gap, not a nitpick.
+
+1. Pick one current checkpoint: **`cues-alex-nolemat-lowhull`** (public on HF
+   at `rajkumars47/cues-alex-nolemat-lowhull` — not `ckpt_alex_nolemat_lowhull`,
+   which doesn't resolve), the production one, for consistency with the rest
+   of the paper going forward.
+2. **Steerability baseline.** Generate against five property axes (band gap,
+   dielectric, density, element set, atom count). For each axis, steerability
+   is *chance-corrected* agreement between what was requested and what was
+   generated: $S = \max(0, (\bar c - 1/K) / (1 - 1/K))$, where $\bar c$ is the
+   raw fraction of generations landing in the requested bin and $K$ is that
+   axis's number of bins. Report $S$ per axis and compare against the
+   historical reference (element set 99.6%, atom count 95.0%, density 0.872,
+   band gap 0.774, dielectric 0.722 raw compliance; chance-corrected ceiling
+   $I_{\mathrm{vec}} = 0.890 \pm 0.030$ for band gap+dielectric+density
+   jointly).
+3. **Composition-fidelity reference.** n=50 generations: for each, check
+   whether the generated structure's element set exactly matches the
+   requested elements ("element-faithful") and whether its atom count exactly
+   matches the requested count ("exact atom count"). Report both rates
+   against the historical reference (99.6% / 95.0%).
+4. **§8.1–§8.4 target-kind experiments (tacit intuition, Pareto-front,
+   disjunction, joint-target) — currently blocked, not just under-documented.**
+   Each of these needs the *original* exemplar pools/seed sets (e.g. the six
+   ionic-fluoride prototypes behind the tacit-intuition result) to reproduce
+   the same comparison, and those pools aren't yet in this public repo. If you
+   want to attempt this anyway, construct a comparable exemplar pool yourself
+   using this project's own "prospecting" method: draw a seed set $S$ from a
+   structural class or property region you can name (anything a user can
+   point at rather than name numerically), estimate $S$'s empirical joint
+   distribution over (element set, atom count), then sample from that
+   distribution and generate conditioned on each draw — this guarantees every
+   request is realizable, since the conditioning values come from real
+   materials. Report the result as a fresh analogous test, not a reproduction
+   of the original numbers. Porting the original pools is a separate,
+   still-open task — flag it if you hit this.
+5. **§11.4's per-prompt steerability-prediction check.** Generate a sample
+   (the original used n≈754–814), score each for Combined/SUN/MSUN via the
+   standard screening path, and check whether a prompt-level predictor built
+   from `chem/sun_predictor` (in `steering/crystals/lemat/code/py/dielectric/`
+   — already in the public vendored copy, no porting needed) achieves better
+   than AUC 0.56 at predicting per-prompt stability. The historical finding is
+   that it doesn't reliably exceed chance at the per-prompt level, only at a
+   cell-aggregate level — confirming or overturning that is the point of
+   re-running it.
 
 ## Report results
 

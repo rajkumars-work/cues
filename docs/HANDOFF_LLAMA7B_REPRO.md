@@ -82,9 +82,11 @@ Reporting at minimum:
 
 - **Parseability rate** — fraction of generations that parse into a valid
   structure at all (the first reported failure mode).
-- **Steerability** — property-conditioning agreement, same metric
-  `experimental_design.md §6.4` defines, so it's directly comparable to this
-  project's own task-sized models' numbers.
+- **Steerability** — property-conditioning agreement, chance-corrected per
+  axis: $S = \max(0, (\bar c - 1/K) / (1 - 1/K))$, where $\bar c$ is the raw
+  fraction of generations landing in the requested bin and $K$ is that axis's
+  number of bins. Same definition this project's task-sized models are
+  scored on, so directly comparable to their numbers.
 
 Even a negative or inconclusive result is useful here — the original
 account's qualitative claim stands or falls on whatever a controlled attempt
