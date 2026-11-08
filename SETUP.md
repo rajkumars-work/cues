@@ -143,6 +143,18 @@ This same token is shared across everyone currently contributing this way
 after this round of experiments wraps up — don't assume it's permanent or
 yours alone.
 
+- **Fixed 2026-11-08, found running a real A5 (`ed_lite`) training arm on a
+  single L4 GPU:** `train_arm.sh`'s watchdog had a hardcoded `STALL_SEC=900`
+  (no override). With `grad_accum=42` micro-batches per logged step, one real
+  step there takes ~920s — just over the old threshold — so the watchdog
+  killed the run as a false-positive "stall" on *every* attempt, right before
+  step 2 could log, looping at step 1 for hours with zero progress (confirmed
+  via `py-spy` that the process was genuinely computing, not hung). Default
+  raised to 1800s and both `STALL_SEC`/`STARTUP_GRACE` are now overridable env
+  vars like the rest of this script's tunables — if a bigger arm or smaller
+  GPU makes 1800s too tight, set `STALL_SEC=<higher>` rather than editing the
+  script.
+
 ## Known gaps (as of this scaffolding pass)
 
 - **Smoke test completed successfully end-to-end (2026-11-05)**, including all
