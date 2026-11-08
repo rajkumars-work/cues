@@ -120,6 +120,29 @@ account (`huggingface_hub.upload_folder`/`upload_file`, same pattern as
 report. Don't request or expect write access to the `rajkumars47` HF account —
 host large files under your own account instead.
 
+**No Hugging Face account, and don't want to set one up just for this?** Ask
+the maintainer for a token instead. They'll mint a fine-grained HF access
+token scoped to write-only on a single dedicated repo
+(`rajkumars47/cues-contrib-dropbox`) and send it to you directly — nothing
+else on the account is reachable with it. Use it the same way you'd use any
+other HF token:
+
+```bash
+export HF_TOKEN=<the token they sent you>
+```
+
+then upload into that repo with the same
+`huggingface_hub.upload_folder`/`upload_file` calls, pointed at
+`rajkumars47/cues-contrib-dropbox` instead of a repo of your own —
+`repo_type="dataset"` (it's a dataset repo, not a model repo; pass that
+explicitly rather than letting the default guess wrong). No account,
+no signup, no invite to accept. Treat the token string itself as a secret —
+don't paste it into a PR, a committed file, or anywhere else it could leak.
+This same token is shared across everyone currently contributing this way
+(not a fresh one per person) and goes away once the maintainer deletes it
+after this round of experiments wraps up — don't assume it's permanent or
+yours alone.
+
 ## Known gaps (as of this scaffolding pass)
 
 - **Smoke test completed successfully end-to-end (2026-11-05)**, including all
