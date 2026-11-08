@@ -31,6 +31,11 @@ SEED=${2:-0}
 : "${DATA_CSV:=./data/corpus/big_d15_autolabel_binrho_k7.csv}"
 : "${CKPT_ROOT:=./checkpoints}"
 : "${BATCH_SIZE:=24}"   # L4 ceiling for the largest arm (dec_only); raise on bigger GPUs
+: "${TOTAL_BATCH_SIZE:=524288}"  # token budget per logged step; every other
+# hyperparameter here was already overridable except this one -- added so a
+# quick kickoff/checkpoint-save smoke check can shrink grad_accum (which is
+# derived from total_batch_size/batch_size) instead of waiting ~900s/step at
+# the real value. Leave at the default for an actual experiment run.
 : "${EPOCHS:=150}"
 : "${SAVE_INTERVAL:=1000}"  # lower this (e.g. 50) for a quick smoke test that needs to see a checkpoint sooner
 : "${LOG_INTERVAL:=50}"
@@ -91,7 +96,7 @@ fi
 
 # Matched across all three arms -- see ../docs/dec_only_17L_replication_design.md §3.
 COMMON_FLAGS="--vocab_size 16000 --lr 5e-5 --warmup_frac 0.15 --grad_clip_norm 0.5 \
---prop_dropout 0.2 --label_dropout 0.0 --max_seq_len 512 --total_batch_size 524288 \
+--prop_dropout 0.2 --label_dropout 0.0 --max_seq_len 512 --total_batch_size $TOTAL_BATCH_SIZE \
 --epochs $EPOCHS --lr_schedule_epochs $EPOCHS --max_steps 0 --batch_size $BATCH_SIZE $SEED_FLAG \
 --cond_probe_interval 0 --num_workers 4 --log_interval $LOG_INTERVAL --save_interval $SAVE_INTERVAL \
 --max_keep_checkpoints 3 --prefix $ARM"
