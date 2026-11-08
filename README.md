@@ -1,25 +1,33 @@
-# CUES — architecture ablation: encoder-decoder vs. decoder-only
+# CUES — experiment handoffs for the CUES paper
 
-Code and data to reproduce the "C2/C3" architecture ablation from the CUES paper
-(Crystals Using Exemplar Steering) — the sibling repo to
-[rajkumars-work/steering](https://github.com/rajkumars-work/steering), just as
-the CUES paper is the sibling of the steering paper.
-
-A from-scratch, matched-methodology retrain of three architecture points on the
-same corpus:
-
-- **ed_control** — encoder-decoder, naive 12 encoder + 12 decoder layers
-- **ed_lite** — encoder-decoder, asymmetric 6 encoder + 18 decoder layers (the
-  configuration the paper recommends)
-- **dec_only** — decoder-only, 17 layers, edim=1024
-
-Background and exactly what question this settles:
-[`docs/dec_only_17L_replication_design.md`](docs/dec_only_17L_replication_design.md).
+Code and data to reproduce experiments that would strengthen the CUES paper
+(Crystals Using Exemplar Steering)'s weaker-evidenced claims — the sibling
+repo to [rajkumars-work/steering](https://github.com/rajkumars-work/steering),
+just as the CUES paper is the sibling of the steering paper.
 
 **Running this as a real experiment (not just trying it out)?** Start at
-[`docs/HANDOFF_C2_C3.md`](docs/HANDOFF_C2_C3.md) instead of the quick start
-below — it has the full launch (all three arms × two seeds, multi-GPU
-guidance), scoring, and results-reporting template.
+[`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) — it indexes every experiment
+hosted here, each cross-referenced to the specific paper limitation it
+resolves, and links to that experiment's own handoff doc with the full
+launch, scoring, and results-reporting instructions.
+
+Currently hosted here:
+
+- **C2/C3 — architecture ablation.** A from-scratch, matched-methodology
+  retrain of three architecture points on the same corpus:
+  - **ed_control** — encoder-decoder, naive 12 encoder + 12 decoder layers
+  - **ed_lite** — encoder-decoder, asymmetric 6 encoder + 18 decoder layers
+    (the configuration the paper recommends)
+  - **dec_only** — decoder-only, 17 layers, edim=1024
+
+  Background: [`docs/dec_only_17L_replication_design.md`](docs/dec_only_17L_replication_design.md).
+  Run it: [`docs/HANDOFF_C2_C3.md`](docs/HANDOFF_C2_C3.md).
+
+- **A5 — corpus ablation.** Wide vs. stability-filtered training corpus,
+  architecture held fixed at `ed_lite`.
+
+  Background: [`docs/A5_wide_vs_narrow_corpus_design.md`](docs/A5_wide_vs_narrow_corpus_design.md).
+  Run it: [`docs/HANDOFF_A5.md`](docs/HANDOFF_A5.md).
 
 ## What's here vs. what's in `steering`
 
@@ -40,10 +48,15 @@ it adds only what's different or missing for this specific experiment:
 - `eval/path_override.py` — a small override for one hardcoded path in the
   companion repo's `screening.py` (`ED_CHECKPOINTS`), so scoring works outside
   the original author's machine. See its docstring.
-- `docs/dec_only_17L_replication_design.md` — the design doc for this experiment,
-  including three real bugs (an LR-floor exposure, an EMA-reset-on-resume bug, and
-  dead qk-norm code) a naive rerun will silently hit again if not already fixed.
-  **Read §2 and §6 before launching anything.**
+- `docs/dec_only_17L_replication_design.md` — the design doc for the C2/C3
+  architecture experiment, including three real bugs (an LR-floor exposure, an
+  EMA-reset-on-resume bug, and dead qk-norm code) a naive rerun will silently
+  hit again if not already fixed. **Read §2 and §6 before launching anything.**
+- `scripts/build_lowhull_corpus.py` — derives the A5 corpus experiment's two
+  training CSVs (stability-filtered and size-matched-wide) from the same wide
+  corpus `fetch_assets.sh` already pulls — no second download.
+- `docs/A5_wide_vs_narrow_corpus_design.md` — the design doc for the A5 corpus
+  experiment.
 - `requirements.txt` — a curated environment spec (training + eval deps).
 
 ## Quick start
@@ -79,10 +92,13 @@ reference to compare a new run against, not required as training input.
 
 ## Status
 
-Smoke-tested successfully end-to-end on a single external L4 GPU
-(2026-11-05) — see [`smoketests/ed_lite_20261105.md`](smoketests/ed_lite_20261105.md)
-for what was validated and the bugs found and fixed along the way. Ready for
-a real full-scale run; see [`docs/HANDOFF_C2_C3.md`](docs/HANDOFF_C2_C3.md).
+The base plumbing (clone, fetch, train, checkpoint) was smoke-tested
+successfully end-to-end on a single external L4 GPU (2026-11-05) — see
+[`smoketests/ed_lite_20261105.md`](smoketests/ed_lite_20261105.md) for what
+was validated and the bugs found and fixed along the way. The A5 corpus path
+specifically has its own, narrower smoke test — see the most recent
+`smoketests/ed_lite_lowhull_*.md` entry. Both experiments are ready for a
+real full-scale run; see [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md).
 
 ## License
 
