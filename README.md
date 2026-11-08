@@ -1,15 +1,20 @@
 # CUES — experiment handoffs for the CUES paper
 
 Code and data to reproduce experiments that would strengthen the CUES paper
-(Crystals Using Exemplar Steering)'s weaker-evidenced claims — the sibling
-repo to [rajkumars-work/steering](https://github.com/rajkumars-work/steering),
-just as the CUES paper is the sibling of the steering paper.
+(Crystals Using Exemplar Steering)'s weaker-evidenced claims, or make an
+already-accepted claim independently verifiable where it currently rests on
+a checkpoint or dataset that no longer exists — the sibling repo to
+[rajkumars-work/steering](https://github.com/rajkumars-work/steering), just
+as the CUES paper is the sibling of the steering paper. See
+[`docs/REPRODUCIBILITY.md`](docs/REPRODUCIBILITY.md) for the standard this
+repo is trying to meet.
 
 **Running this as a real experiment (not just trying it out)?** Start at
 [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) — it indexes every experiment
-hosted here, each cross-referenced to the specific paper limitation it
-resolves, and links to that experiment's own handoff doc with the full
-launch, scoring, and results-reporting instructions.
+hosted here (both the ones the paper's thesis depends on, and lower-priority
+nice-to-have reconstructions), each cross-referenced to the specific paper
+limitation it resolves, and links to that experiment's own handoff doc with
+the full launch, scoring, and results-reporting instructions.
 
 Currently hosted here:
 
@@ -28,6 +33,17 @@ Currently hosted here:
 
   Background: [`docs/A5_wide_vs_narrow_corpus_design.md`](docs/A5_wide_vs_narrow_corpus_design.md).
   Run it: [`docs/HANDOFF_A5.md`](docs/HANDOFF_A5.md).
+
+- **Four nice-to-have reconstructions** (low priority — none of these block
+  the paper's thesis, see `docs/REPRODUCIBILITY.md`): the NxN data-ablation
+  matrix's underlying checkpoints plus other lost-checkpoint evidence
+  ([`docs/HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](docs/HANDOFF_CHECKPOINT_RECONSTRUCTION.md)),
+  the abandoned in-house diffusion lineage
+  ([`docs/HANDOFF_DIFFUSION_REPRO.md`](docs/HANDOFF_DIFFUSION_REPRO.md)), the
+  informal large-model fine-tuning account
+  ([`docs/HANDOFF_LLAMA7B_REPRO.md`](docs/HANDOFF_LLAMA7B_REPRO.md)), and an
+  incomplete DPO-for-novelty experiment
+  ([`docs/HANDOFF_DPO_NOVELTY.md`](docs/HANDOFF_DPO_NOVELTY.md)).
 
 ## What's here vs. what's in `steering`
 

@@ -1,21 +1,37 @@
 # Experiments index
 
 This repo hosts handoff packages for experiments that would strengthen the
-CUES paper's weaker-evidenced claims — each one maps to a specific item in
-the paper's own `limitations.md`. Start here, then follow the design/handoff
-doc pair for the experiment you're running.
+CUES paper's weaker-evidenced claims, or make an already-accepted claim
+independently reproducible where it currently isn't. **Read
+[`REPRODUCIBILITY.md`](REPRODUCIBILITY.md) first** — it states the standard
+every entry below is trying to meet and why both tiers (blocking and
+nice-to-have) exist in the same index. Then come back here and follow the
+design/handoff doc pair for the experiment you're running.
+
+## Blocking gaps — the paper's thesis depends on these
 
 | `limitations.md` item | Gap | Handoff available? | Docs |
 |---|---|---|---|
 | 1 | Narrow side-question: does decoder-only or the naive 12+12 split score higher on aggregate quality, independent of the (settled) allocation finding? | **Yes** | Design: [`dec_only_17L_replication_design.md`](dec_only_17L_replication_design.md) · Run: [`HANDOFF_C2_C3.md`](HANDOFF_C2_C3.md) |
-| 2 | Original in-house diffusion-vs-transformer comparison is unrecoverable (no surviving checkpoints/data) | No | Out of scope — `limitations.md` item 2 states this directly: "We do not treat the original, narrower in-house comparison as worth new compute to recover, given the broader evidence already in hand." |
-| 3 | Large-model fine-tuning comparison rests on an informal, qualitative account | No | Out of scope — `limitations.md` item 3: "not something we view as a priority: the paper's actual argument only needs the qualitative finding, stated plainly as such, which we already have." |
 | 4 | Training on a wide, non-stability-filtered corpus rests on indirect evidence, since the one direct test was withdrawn as a measurement artifact | **Yes** | Design: [`A5_wide_vs_narrow_corpus_design.md`](A5_wide_vs_narrow_corpus_design.md) · Run: [`HANDOFF_A5.md`](HANDOFF_A5.md) |
 | 5 | Near-equilibrium benchmark table needs a rebuild | No | Self-serve, no external handoff needed — `limitations.md` item 5: "this needs no new training, only evaluation already within reach on an existing checkpoint." |
 
-Items 2, 3, and 5 have no handoff package here because none of them need an
-external collaborator's GPU time — see the quoted reasoning above for each
-(copied verbatim from `limitations.md`, not re-derived).
+## Nice-to-have — low priority, not blocking, but worth having a plan
+
+These don't gate anything the paper argues — see each item's own
+`limitations.md` text for why — but per `REPRODUCIBILITY.md`, every gap gets
+a written plan, not just the urgent ones.
+
+| `limitations.md` item | Gap | Docs |
+|---|---|---|
+| 2 | Original in-house diffusion-vs-transformer comparison is unrecoverable (no surviving checkpoints/data) | [`HANDOFF_DIFFUSION_REPRO.md`](HANDOFF_DIFFUSION_REPRO.md) |
+| 3 | Large-model (~7B) fine-tuning comparison rests on an informal, qualitative account | [`HANDOFF_LLAMA7B_REPRO.md`](HANDOFF_LLAMA7B_REPRO.md) |
+| 6 | The NxN data-ablation matrix's underlying checkpoints, and several exemplar-steering/composition-fidelity numbers, rest on checkpoints with no surviving weights | [`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](HANDOFF_CHECKPOINT_RECONSTRUCTION.md) |
+| 7 | A second DPO experiment (targeting generation novelty) was designed and partially run but never completed to a citable result | [`HANDOFF_DPO_NOVELTY.md`](HANDOFF_DPO_NOVELTY.md) |
+
+Item 5 has no handoff package because it needs no external collaborator's
+GPU time at all (self-serve, per the quoted reasoning above) — it's the one
+entry in either tier without a `HANDOFF_*.md`.
 
 ## Running an experiment
 
@@ -37,3 +53,11 @@ the full "why," not just the "how."
 If you're running both, note the efficiency overlap documented in the A5
 design doc §2: a C2/C3 `ed_lite` run on the full wide corpus already covers
 A5's secondary (full-wide) arm — don't train it twice.
+
+The four nice-to-have items are each a self-contained `HANDOFF_*.md` with no
+companion design doc (lower priority warrants less scaffolding, not less
+honesty) — each states its own priority, exactly what's missing, and either
+a ready-to-run recipe or an honest statement of what engineering would need
+to exist first. `HANDOFF_CHECKPOINT_RECONSTRUCTION.md`'s "Part B" is the
+cheapest thing in this entire repo to pick up: no training at all, just
+re-running existing measurements on a checkpoint that already exists.
