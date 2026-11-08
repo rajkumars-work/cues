@@ -39,7 +39,10 @@ screening pipeline:
 
 Reproducing *this* table needs no new model-building — MatterGen, ADiT,
 OMatG, and CDVAE are all public, and this project's own checkpoint is public
-(`rajkumars47/ckpt_alex_nolemat_lowhull`). If anyone wants to independently
+(`rajkumars47/cues-alex-nolemat-lowhull` — not `ckpt_alex_nolemat_lowhull`,
+which doesn't resolve; see `limitations.md` item 8 for the full citation
+fix and the separate, still-open gap that this checkpoint's training corpus
+isn't public). If anyone wants to independently
 verify a number from this project, **start here, not with the sections
 below** — it's a straightforward "run four public baselines + our public
 checkpoint through the same scoring pipeline" task, not a research

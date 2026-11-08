@@ -47,10 +47,11 @@ avoid mode collapse, which an earlier, more aggressive attempt hit):
 | Batch size | `16` | Matched to dataset scale |
 | Early stop | On entropy dropping below `0.3` | Catches mode collapse before it fully sets in |
 
-**Base checkpoint:** use the current production checkpoint
-(`rajkumars47/ckpt_alex_nolemat_lowhull`) rather than the original design's
-now-superseded checkpoint — same fine-tune recipe, current base model, so the
-result is about something the paper still stands behind.
+**Base checkpoint:** use the current production checkpoint, public on HF at
+`rajkumars47/cues-alex-nolemat-lowhull` (not `ckpt_alex_nolemat_lowhull`,
+which doesn't resolve — see `limitations.md` item 8), rather than the
+original design's now-superseded checkpoint — same fine-tune recipe, current
+base model, so the result is about something the paper still stands behind.
 
 ## The one real gap: porting the code
 

@@ -28,10 +28,15 @@ a written plan, not just the urgent ones.
 | 3 | Large-model (~7B) fine-tuning comparison rests on an informal, qualitative account | [`HANDOFF_LLAMA7B_REPRO.md`](HANDOFF_LLAMA7B_REPRO.md) |
 | 6 | The NxN data-ablation matrix's underlying checkpoints, and several exemplar-steering/composition-fidelity numbers, rest on checkpoints with no surviving weights | [`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](HANDOFF_CHECKPOINT_RECONSTRUCTION.md) |
 | 7 | A second DPO experiment (targeting generation novelty) was designed and partially run but never completed to a citable result | [`HANDOFF_DPO_NOVELTY.md`](HANDOFF_DPO_NOVELTY.md) |
+| 8 | The production checkpoint's own training corpus was never published, and one checkpoint citation in this repo pointed to the wrong HF repo name | [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md) |
+| 9 | The build-order (§9.4) and scratchpad-field (§9.5) ablations rest on dedicated checkpoints never individually audited for survival | [`HANDOFF_TARGET_ABLATION_REPRO.md`](HANDOFF_TARGET_ABLATION_REPRO.md) |
 
 Item 5 has no handoff package because it needs no external collaborator's
 GPU time at all (self-serve, per the quoted reasoning above) — it's the one
-entry in either tier without a `HANDOFF_*.md`.
+entry in either tier without a `HANDOFF_*.md`. Item 8 is the cheapest entry
+in this entire table — no training or retraining at all, just a filter
+script already specified elsewhere in this repo and two corrected
+citations.
 
 ## Running an experiment
 
@@ -54,10 +59,13 @@ If you're running both, note the efficiency overlap documented in the A5
 design doc §2: a C2/C3 `ed_lite` run on the full wide corpus already covers
 A5's secondary (full-wide) arm — don't train it twice.
 
-The four nice-to-have items are each a self-contained `HANDOFF_*.md` with no
+The nice-to-have items are each a self-contained `HANDOFF_*.md` with no
 companion design doc (lower priority warrants less scaffolding, not less
 honesty) — each states its own priority, exactly what's missing, and either
 a ready-to-run recipe or an honest statement of what engineering would need
-to exist first. `HANDOFF_CHECKPOINT_RECONSTRUCTION.md`'s "Part B" is the
-cheapest thing in this entire repo to pick up: no training at all, just
-re-running existing measurements on a checkpoint that already exists.
+to exist first. `HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` (item 8) is the
+cheapest thing in this entire repo to pick up — no training, no retraining,
+not even a measurement re-run, just a filter script and two citation fixes.
+`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`'s "Part B" is the next cheapest: no
+training at all, just re-running existing measurements on a checkpoint that
+already exists.

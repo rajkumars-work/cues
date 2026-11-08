@@ -70,9 +70,15 @@ engineering project in its own right, separate from any GPU-hours question.
 ## What a complete result looks like
 
 A fine-tuned 7-8B-class model, evaluated with this project's own
-screening/scoring pipeline, on the same corpus used elsewhere in this paper
-(`rajkumars47/data_alex_nolemat_lowhull`, the current production corpus, for
-consistency), reporting at minimum:
+screening/scoring pipeline, on the production corpus used elsewhere in this
+paper. **Note:** that corpus (`alex_nolemat_lowhull`) is not currently
+public under any HF repo name — `rajkumars47/data_alex_nolemat_lowhull`
+exists but is private; see `limitations.md` item 8 /
+`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` for the fix. Until that's closed,
+use the public `rajkumars47/data_big_d15` instead (the corpus behind
+`ckpt_autolabel_v1_binrho_k7`/`ckpt_ed_enclight_6_18`) for an equivalent,
+currently-obtainable comparison, and note the substitution in your report.
+Reporting at minimum:
 
 - **Parseability rate** — fraction of generations that parse into a valid
   structure at all (the first reported failure mode).

@@ -35,7 +35,7 @@ and might mean most of this doc is unnecessary:
 
 | # | NxN row | Training corpus | Checkpoint status |
 |---|---|---|---|
-| 1 | `alex_nolemat_lowhull` | Alexandria, LeMat-disjoint, `e_above_hull ≤ 0.1` (249,117 rows) | **Known to survive** — this is the current production checkpoint, public on HF: `rajkumars47/ckpt_alex_nolemat_lowhull` / `rajkumars47/data_alex_nolemat_lowhull`. Ranked #1 in the matrix. |
+| 1 | `alex_nolemat_lowhull` | Alexandria, LeMat-disjoint, `e_above_hull ≤ 0.1` (249,117 rows) | **Known to survive** — this is the current production checkpoint, public on HF at `rajkumars47/cues-alex-nolemat-lowhull` (not `ckpt_alex_nolemat_lowhull` — that name doesn't resolve). Its training corpus is **not** public under any name checked; see `HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` (`limitations.md` item 8). Ranked #1 in the matrix. |
 | 2 | `production` (`big_d15`) | MP+Alex+WBM+diel+MAX mix (242,170 rows) | **Known to survive** — this row reused the existing `ckpt_ed_enclight_6_18` checkpoint rather than training a new one for the matrix. Public on HF: `rajkumars47/ckpt_ed_enclight_6_18` / `rajkumars47/data_big_d15`. |
 | 3 | `alex` | Alexandria, unfiltered (250,010 rows) | Not confirmed either way — audit first |
 | 4 | `alex_onhull` | Alexandria, `e_above_hull ≤ 0` (174,986 rows) | Not confirmed — audit first |
@@ -128,16 +128,24 @@ historical record rest on it:
 - Four of §8's five exemplar-steering target-kind results (tacit expert
   intuition, Pareto-front probing, disjunctions, joint targets). The fifth
   (population-level Combined range) was already spot-checked on a current
-  checkpoint (`ckpt_ed_control_12_12_d15`) on 2026-08-12 and confirmed
+  checkpoint (`ckpt_ed_control_12_12_d15`; public on HF as
+  `rajkumars47/ckpt_backup_ed_control_12_12_d15`) on 2026-08-12 and confirmed
   qualitatively — no further work needed there.
+- The per-prompt steerability-prediction analysis in `analysis.md §11.4`
+  (the AUC ≤ 0.56 finding, and the underlying SUN-driver base rates and
+  composition-rarity regression it's drawn from) — added to this list
+  2026-11-08; not previously covered here, but the same checkpoint and the
+  same "re-run the measurement, don't retrain" fix as everything else in
+  this part.
 
 ### Why this is cheap, not a retrain
 
 **This does not require recovering or reconstructing the lost checkpoint.**
 Every number above is a measurement, not a training result — re-running the
 same measurement on a checkpoint that already exists and is public
-(`ckpt_ed_control_12_12_d15` or the current production
-`ckpt_alex_nolemat_lowhull`) answers the same question. If the new numbers
+(`ckpt_ed_control_12_12_d15` / `rajkumars47/ckpt_backup_ed_control_12_12_d15`,
+or the current production `ckpt_alex_nolemat_lowhull` /
+`rajkumars47/cues-alex-nolemat-lowhull`) answers the same question. If the new numbers
 land close to the historical ones, that's independent confirmation; if they
 diverge, that's worth knowing too. Either way, no GPU training is needed —
 just generation + scoring on a checkpoint already in hand.
@@ -155,6 +163,10 @@ just generation + scoring on a checkpoint already in hand.
 4. §8.1–§8.4: re-run each of the four target-kind experiments (tacit
    intuition, Pareto-front, disjunction, joint-target) on the new checkpoint,
    same seed pools and methodology each section already documents.
+5. §11.4's per-prompt steerability-prediction check: re-run the SUN-driver
+   base-rate and composition-rarity analysis (`analysis.md §11.4`'s AUC ≤
+   0.56 finding) on the new checkpoint's generations — same `chem/sun_predictor`
+   methodology, no new code needed.
 
 ## Report results
 
