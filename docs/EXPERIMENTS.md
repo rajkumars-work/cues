@@ -32,12 +32,13 @@ as stale until fixed.** Ordered within each label by ascending cost
 | 7 | A4 — GNoME cross-source augmentation | Nice-to-have | Augmentation gain confounded with corpus size | — |
 | 8 | A2 — corpus-size floor | Nice-to-have | Size floor confounded with other training-recipe differences | — |
 | 9 | C1 — diffusion-vs-transformer comparison | Nice-to-have | Original in-house comparison unrecoverable — not recommended to pursue | Run: [`HANDOFF_DIFFUSION_REPRO.md`](HANDOFF_DIFFUSION_REPRO.md) |
+| 10 | C10 — `encoder_lr_scale` calibration | Nice-to-have | `ed_train.py` warns the default may be miscalibrated for `ed_lite`'s token ratio; never checked whether it matters | — |
 | — | R3 — production corpus publication | **Resolved, 2026-11-09** | Training corpus is now public (`rajkumars47/data_alex_nolemat_lowhull`) — no action needed | [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md) |
 | 11 | R2 — DPO novelty experiment | Reproducibility | A designed DPO experiment was started but never finished | Run: [`HANDOFF_DPO_NOVELTY.md`](HANDOFF_DPO_NOVELTY.md) |
 | 12 | R1 — NxN checkpoint audit | Reproducibility | 8 of 10 NxN-matrix checkpoints never individually audited for survival | Run: [`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](HANDOFF_CHECKPOINT_RECONSTRUCTION.md) |
 | 13 | R4 — ablation checkpoints | Reproducibility | Build-order/scratchpad-field ablation checkpoints never audited | Run: [`HANDOFF_TARGET_ABLATION_REPRO.md`](HANDOFF_TARGET_ABLATION_REPRO.md) |
 
-Items 4, 5, 7, 8 have no handoff doc yet (lower priority, nothing's been
+Items 4, 5, 7, 8, 10 have no handoff doc yet (lower priority, nothing's been
 packaged) — see `experiments_todo.md`'s own entries for their next steps if
 you want to pick one up anyway.
 
@@ -72,6 +73,7 @@ the fact.
 | GNoME augmentation gain confounded with corpus size | — (see `experiments_todo.md` A4) |
 | Corpus-size floor confounded with other training-recipe differences | — (see `experiments_todo.md` A2) |
 | Original in-house diffusion-vs-transformer comparison is unrecoverable (no surviving checkpoints/data). **Removed from `limitations.md`, 2026-11-08** for the same reason as above — the design decision is otherwise well-evidenced. | Run: [`HANDOFF_DIFFUSION_REPRO.md`](HANDOFF_DIFFUSION_REPRO.md) |
+| `ed_train.py`'s own runtime warning flags that `--encoder_lr_scale` (default 1.0, never set by `train_arm.sh`) may be miscalibrated for `ed_lite`'s ~13x target/source token ratio (it suggests 0.27). Whether this affected the production checkpoint or any published number has never been checked. **Added 2026-11-09.** | — (see `experiments_todo.md` C10) |
 
 ## Reproducibility — artifact availability, not an evidentiary gap
 

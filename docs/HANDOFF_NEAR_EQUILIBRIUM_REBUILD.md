@@ -5,11 +5,16 @@ because the underlying finding is in doubt or because this is central to
 the paper's three-contributor thesis — it isn't; §10 is explicitly
 supporting context. It's MUST because an unship-able section blocks
 calling the draft complete, regardless of how peripheral that section is.
-Every other item in `EXPERIMENTS.md` is SHOULD or NICE; this is the one
-thing actually gating a submission-ready draft.
+Every other item in `EXPERIMENTS.md` is Nice-to-have or Reproducibility;
+this is the one thing actually gating a submission-ready draft.
 
 **You have no prior context — read this whole file before touching
 anything.** This is a real gap in a real paper, not a test.
+
+**Known blocker, found 2026-11-09 — read before attempting Part A:** a real
+run of this pipeline against a fresh clone of the public `steering` repo
+hits a hard failure. See "Known gap: `dielectric/validity/` is missing from
+the public `steering` repo" below before spending any GPU time on this.
 
 ## What this answers
 
@@ -49,22 +54,31 @@ eyes-on sourcing check since.
 This reuses the exact same generation → relaxation → scoring pipeline the
 original internal run used, just pointed at the current checkpoint:
 
+**Verified working recipe, 2026-11-09** (`scripts/smoke_near_equilibrium.py`
+runs exactly this, at a tiny n, as part of `scripts/test_handoff.sh` — read
+it for the actual working code, not just this prose):
+
 1. **Generate** n≈1000 raw structures (natoms ≤ 20, the same matched prompt
-   pool / protocol used for every other Combined number in this paper — see
-   `HANDOFF_C2_C3.md`'s "Score each finished run" for the
-   `path_override.py`/`screening.py` setup) from
-   `rajkumars47/cues-alex-nolemat-lowhull`.
-2. **Relax** that same population with MACE-MP — `steering`'s own
-   `crystals/lemat/code/py/lemat-genbench/scripts/relax_structures.py
-   --mlip mace` does this (see its own `--help`/docstring for exact flags).
-   The original run used FIRE, `ExpCellFilter`, `fmax=0.05`, ≤200 steps —
-   match these unless you have a specific reason to deviate, and say so if
-   you do.
-3. **Score both populations** (raw and relaxed) through the same
-   `comprehensive_multi_mlip_hull` (ORB+MACE ensemble) LeMat-GenBench
-   configuration used everywhere else in this paper — this is the same
-   `screening.py`/`combined.py` path as `HANDOFF_C2_C3.md`, just run twice
-   (once per population) instead of once.
+   pool / protocol used for every other Combined number in this paper) from
+   `rajkumars47/cues-alex-nolemat-lowhull`, via `screening.load_model()` +
+   `screening.load_sources(..., split="eval")` + `screening.generate_batch()`.
+   **Pass `version_id="d15_binrho_k7"` explicitly** —
+   `generate_batch`'s own default (`"d6"`) has the wrong number of target
+   segments for this checkpoint (misses the scratchpad segment), which makes
+   `parse_target` fall back to a fuzzy parser that then misreads a lattice
+   parameter as an element symbol and crashes every generation. Found running
+   this for real; not documented anywhere else.
+2. **Relax** that same population with MACE — `screening.relax_batch()`
+   does this directly (FIRE, `fmax`/max-steps per its own `DEFAULTS`); no
+   separate script needed, despite what an earlier draft of this doc said.
+3. **Score both populations** (raw and relaxed) via `screening.screen_batch()`
+   with `full=True` — called twice: once as
+   `screen_batch(gen_results, gen_results, ..., full=True)` for the **raw**
+   pass (both `GenResult` and `RelaxResult` objects expose `.atoms`, so
+   passing the unrelaxed `gen_results` in the `relax_results` slot scores the
+   raw structures), once as `screen_batch(gen_results, relax_results, ...,
+   full=True)` for the **relaxed** pass. This `full=True` mode needs
+   `dielectric/validity/` — see the known gap below before running it.
 4. **Compute `|ΔV|`** directly from the relax step's own before/after
    volumes. Report the median (the headline figure the original run used —
    it's heavy-tailed, so mean alone is misleading) and the mean, same as
@@ -83,6 +97,30 @@ and flag anything that doesn't match — not re-running MatterGen/OMatG/
 CrystaLLM/ADiT yourselves. If you don't have access to the internal docs,
 report Part A's results and leave Part B to the maintainer; it's zero
 GPU-time either way.
+
+## Known gap: `dielectric/validity/` is missing from the public `steering` repo
+
+Found 2026-11-09, running this pipeline for real on a fresh clone of the
+public `steering` repo (not this project's internal monorepo). Step 3 above
+(`screen_batch(..., full=True)`) imports `from validity.structural import
+load_stability_calc, load_mace` — but the public `steering` repo's clone
+has no `dielectric/validity/` directory at all, only
+`dielectric/chem/props/` (which `relax_batch`, step 2, needs and *does*
+have). This isn't a path-setup mistake — `dielectric/validity/` genuinely
+doesn't exist in what `git clone https://github.com/rajkumars-work/steering`
+checks out, confirmed by directly listing that clone's contents.
+
+**This means `full=True` scoring doesn't currently work on a fresh public
+clone at all** — not just for this experiment. If `HANDOFF_C2_C3.md`'s
+"Score each finished run" step uses the same `screen_batch(full=True)` path
+(it's written to), it likely hits the same wall; this hasn't been separately
+confirmed, but it should be checked rather than assumed fine.
+
+**This needs a maintainer decision, not a workaround**: whether to publish
+`dielectric/validity/` (and audit for any other quietly-missing directories
+`screening.py` depends on) into the public `steering` repo. Until that
+happens, Part A's step 3 cannot run on a fresh clone — Parts 1 and 2
+(generation, relaxation) work fine on their own, confirmed by a real run.
 
 ## Deliverable table
 
