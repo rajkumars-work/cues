@@ -41,8 +41,14 @@ tqdm>=4.67.3
 # plain `import ed_data` alone doesn't reach it.
 ase>=3.28.0
 pymatgen>=2025.10.7
-pymatgen-core>=2025.10.7
 spglib>=2.7.0
+# "pymatgen-core" is NOT a real PyPI package -- there is no separate
+# pymatgen-core distribution; the functionality lives in pymatgen itself.
+# Listing it here made `pip install -r requirements.txt` fail unconditionally
+# on every machine ("No matching distribution found for pymatgen-core", pip
+# returns zero available versions for that name) -- the whole file install
+# aborted before reaching huggingface_hub below, so nothing past this point
+# ever installed. Removed 2026-11-09, found running this exact command fresh.
 
 # Hugging Face fetch/upload
 huggingface_hub>=1.14.0

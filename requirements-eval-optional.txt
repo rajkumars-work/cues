@@ -5,3 +5,10 @@
 
 mace-torch==0.3.15
 e3nn==0.4.4
+
+# dielectric/validity/structural.py (used by screen_batch(full=True)) imports
+# smact directly for chemistry-filter checks (pauling_test etc.) -- not
+# listed here before 2026-11-09, found running this exact scoring path fresh
+# ("No module named 'smact'"), after fixing the missing validity/ directory
+# itself (see HANDOFF_NEAR_EQUILIBRIUM_REBUILD.md's "Known gap" section).
+smact

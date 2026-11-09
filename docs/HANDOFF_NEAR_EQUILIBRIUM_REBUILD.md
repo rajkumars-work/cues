@@ -11,10 +11,13 @@ this is the one thing actually gating a submission-ready draft.
 **You have no prior context — read this whole file before touching
 anything.** This is a real gap in a real paper, not a test.
 
-**Known blocker, found 2026-11-09 — read before attempting Part A:** a real
-run of this pipeline against a fresh clone of the public `steering` repo
-hits a hard failure. See "Known gap: `dielectric/validity/` is missing from
-the public `steering` repo" below before spending any GPU time on this.
+**Verified end-to-end, 2026-11-09.** A fresh clone of both public repos, run
+on a clean GPU VM with no prior state, completed the full generate → relax
+→ score-raw → score-relaxed pipeline at a small `n` with no crash. Getting
+there found and fixed five real bugs along the way — see "What running this
+for real actually found" below. None of them require any special setup
+beyond what's already in `SETUP.md`/this doc; `scripts/test_handoff.sh`
+exercises this automatically now.
 
 ## What this answers
 
@@ -78,7 +81,10 @@ it for the actual working code, not just this prose):
    passing the unrelaxed `gen_results` in the `relax_results` slot scores the
    raw structures), once as `screen_batch(gen_results, relax_results, ...,
    full=True)` for the **relaxed** pass. This `full=True` mode needs
-   `dielectric/validity/` — see the known gap below before running it.
+   `dielectric/validity/` and `smact` — both now present/installable (see
+   "What running this for real actually found" below), and a real MACE
+   model file — see that section for how to get one without `/data/assets/...`
+   or sudo.
 4. **Compute `|ΔV|`** directly from the relax step's own before/after
    volumes. Report the median (the headline figure the original run used —
    it's heavy-tailed, so mean alone is misleading) and the mean, same as
@@ -98,29 +104,57 @@ CrystaLLM/ADiT yourselves. If you don't have access to the internal docs,
 report Part A's results and leave Part B to the maintainer; it's zero
 GPU-time either way.
 
-## Known gap: `dielectric/validity/` is missing from the public `steering` repo
+## What running this for real actually found
 
-Found 2026-11-09, running this pipeline for real on a fresh clone of the
-public `steering` repo (not this project's internal monorepo). Step 3 above
-(`screen_batch(..., full=True)`) imports `from validity.structural import
-load_stability_calc, load_mace` — but the public `steering` repo's clone
-has no `dielectric/validity/` directory at all, only
-`dielectric/chem/props/` (which `relax_batch`, step 2, needs and *does*
-have). This isn't a path-setup mistake — `dielectric/validity/` genuinely
-doesn't exist in what `git clone https://github.com/rajkumars-work/steering`
-checks out, confirmed by directly listing that clone's contents.
+Five real bugs, each only visible by actually running the pipeline fresh —
+none were apparent from reading the code. All are now fixed; the pipeline
+was re-verified end-to-end after each one, on a completely fresh clone of
+both public repos:
 
-**This means `full=True` scoring doesn't currently work on a fresh public
-clone at all** — not just for this experiment. If `HANDOFF_C2_C3.md`'s
-"Score each finished run" step uses the same `screen_batch(full=True)` path
-(it's written to), it likely hits the same wall; this hasn't been separately
-confirmed, but it should be checked rather than assumed fine.
+1. **`dielectric/validity/` was missing from the public `steering` repo
+   entirely.** `screen_batch(full=True)` imports `from validity.structural
+   import load_stability_calc, load_mace` — a fresh clone had no
+   `dielectric/validity/` directory at all, confirmed by directly listing
+   it. Published, along with the one other file it needs
+   (`dielectric/blocked_elements.py`) that wasn't already public either.
+   **This also means `HANDOFF_C2_C3.md`'s "Score each finished run" step
+   should now work too** (it uses the same `full=True` path) — not
+   separately re-verified end-to-end, but it was blocked on the exact same
+   missing directory.
+2. **`requirements.txt`'s `pip install` failed unconditionally.**
+   `pymatgen-core>=2025.10.7` isn't a real PyPI package name — there's no
+   separate `pymatgen-core` distribution, the functionality lives in
+   `pymatgen` itself. Pip aborted the whole file's install on this, silently
+   taking `huggingface_hub` and everything listed after it down with it.
+   Removed.
+3. **`smact` (used by `validity/structural.py` for chemistry-filter checks)
+   was never listed in either requirements file.** Added to
+   `requirements-eval-optional.txt`.
+4. **Two separate hardcoded MACE model paths, each pointing at
+   `/data/assets/checkpoints/mace/...` on the original author's own
+   machine**, in `validity/structural.py` (`MACE_MODEL_PATH`) and
+   `chem/stability.py` (`DEFAULT_MACE_PATH`) — both bound as default
+   *function-argument* values at import time, so the usual
+   `path_override.py`-style "reassign the module attribute after import"
+   trick silently doesn't work for either (the function's default was
+   already fixed by the time any override code runs). Both now read from a
+   shared `MACE_MODEL_PATH` environment variable instead, falling back to
+   the original hardcoded path unchanged for existing internal use.
+   `scripts/smoke_near_equilibrium.py` sets this env var and auto-downloads
+   the public MACE-MP-0b3 model to `~/.cache/mace/` if it's not already
+   there — no `/data/assets/...`, no sudo needed.
+5. **A third, different hardcoded MACE path** (`chem/props/relax.py`'s
+   `MACE_MODELS["mpa-0"]`, used by `relax_batch`'s own default) — this one
+   *is* read fresh at call time rather than bound as a default, so no code
+   patch was needed: `scripts/smoke_near_equilibrium.py` just passes
+   `relax_model=` explicitly, reusing the same model already downloaded for
+   scoring instead of needing a second download and a third vendored-file
+   patch.
 
-**This needs a maintainer decision, not a workaround**: whether to publish
-`dielectric/validity/` (and audit for any other quietly-missing directories
-`screening.py` depends on) into the public `steering` repo. Until that
-happens, Part A's step 3 cannot run on a fresh clone — Parts 1 and 2
-(generation, relaxation) work fine on their own, confirmed by a real run.
+Also found and fixed, separately: `generate_batch`'s own default
+`version_id` ("d6") has the wrong target-segment count for this checkpoint
+and crashes every generation via a fuzzy-parse fallback — see Part A step 1
+above for that one.
 
 ## Deliverable table
 

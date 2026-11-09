@@ -35,6 +35,26 @@ DEVICE = os.environ.get("NEAR_EQ_DEVICE", "cuda")
 # override via NEAR_EQ_VERSION_ID if pointed at a different checkpoint.
 VERSION_ID = os.environ.get("NEAR_EQ_VERSION_ID", "d15_binrho_k7")
 
+# validity/structural.py's load_mace() hardcodes MACE_MODEL_PATH as a
+# default *argument* value (bound at import time), so it must be set via
+# this env var BEFORE that module is first imported -- a module-attribute
+# monkeypatch after the fact (the path_override.py pattern used for
+# ED_CHECKPOINTS) does not work here. Point it at a local cache and
+# auto-download the public MACE-MP-0b3 model if it's not already there,
+# rather than requiring the hardcoded /data/assets/... path (and the sudo
+# it would need) to exist. Found running this for real, 2026-11-09.
+if "MACE_MODEL_PATH" not in os.environ:
+    _cache_dir = os.path.join(os.path.expanduser("~"), ".cache", "mace")
+    _model_path = os.path.join(_cache_dir, "mace-mp-0b3-medium.model")
+    if not os.path.exists(_model_path):
+        os.makedirs(_cache_dir, exist_ok=True)
+        import urllib.request
+        _url = ("https://github.com/ACEsuit/mace-mp/releases/download/"
+                "mace_mp_0b3/mace-mp-0b3-medium.model")
+        print(f"Downloading MACE model from {_url} ...", flush=True)
+        urllib.request.urlretrieve(_url, _model_path)
+    os.environ["MACE_MODEL_PATH"] = _model_path
+
 
 def fail(msg):
     print(f"FAIL: {msg}")
@@ -96,7 +116,15 @@ print(f"RAW screen produced {n_raw} result(s)", flush=True)
 
 print("Relaxing ...", flush=True)
 try:
-    relax_results = screening.relax_batch(gen_results, DEVICE)
+    # Pass the already-downloaded model explicitly -- relax_batch()'s own
+    # default (relax_model=None) falls through to chem/props/relax.py's
+    # MACE_MODELS["mpa-0"], a DIFFERENT hardcoded /data/assets/... path (a
+    # third one, distinct from MACE_MODEL_PATH/DEFAULT_MACE_PATH above) for
+    # a different MACE variant. Reusing the one model already in hand here
+    # avoids a second download and a third vendored-file patch. Found
+    # running this for real, 2026-11-09.
+    relax_results = screening.relax_batch(gen_results, DEVICE,
+                                           relax_model=os.environ["MACE_MODEL_PATH"])
 except Exception as e:
     fail(f"relax_batch crashed -- {e}")
 n_conv = sum(1 for r in relax_results if r is not None and r.converged)
