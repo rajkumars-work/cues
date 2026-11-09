@@ -1,11 +1,36 @@
 # Handoff: publishing the production checkpoint's own training corpus
 
-**Priority: REPRODUCIBILITY — doesn't touch the thesis, but this is the
-cheapest real gap in this entire repo to close.** No training, no retraining, not even a
-measurement re-run: the checkpoint already exists, already works, and is
-already in day-to-day use. What's missing is a public copy of the file it
-was trained on, plus two citation fixes. If you only have twenty minutes,
-this is the item to pick up.
+**RESOLVED, 2026-11-09 — nothing left to do here.** The corpus is now
+public: `rajkumars47/data_alex_nolemat_lowhull` (225,103 rows — a close
+approximation, not the exact 249,117-row original; that repo's own README
+explains why, same explanation as below). Both citations (checkpoint name,
+corpus location) are fixed across this repo's docs. Kept below for the full
+"what was wrong and why" context, in case anyone lands here from an old
+link — **the "What to do" section describes the original plan (a full
+`StructureMatcher` rebuild), which is not what actually happened**; see
+"What actually happened" right below instead.
+
+## What actually happened
+
+The original plan (below) was to rebuild the exact 249,117-row corpus from
+public Alexandria via the real `StructureMatcher` filter. Picking this back
+up, a closer look found that an already-existing, already-correct backup of
+the production checkpoint's actual training data was sitting in a private
+HF dataset repo (`rajkumars47/data_alex_nolemat_lowhull`, pushed
+2026-07-13) — at 225,103 rows, not 249,117, because that backup's own build
+script substituted a faster `composition_absent` filter for the real
+`StructureMatcher` pass (see its docstring). Rather than spend the
+nontrivial compute to rebuild the exact original (Alexandria's
+`full_pbe_2025.07.02` release is ~5.78M entries), the cheaper and still
+honest path was taken: publish the close approximation that already
+existed, with the discrepancy documented plainly, rather than silently
+presenting it as exact. The repo's README states this; so does the
+provenance note in `cues/docs/experiments.md`.
+
+---
+
+**The rest of this file is the original, now-superseded plan — read
+"What actually happened" above first.**
 
 **You have no prior context — read this whole file before touching
 anything.**

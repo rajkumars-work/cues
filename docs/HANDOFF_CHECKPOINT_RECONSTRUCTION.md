@@ -36,7 +36,7 @@ and might mean most of this doc is unnecessary:
 
 | # | NxN row | Training corpus | Checkpoint status |
 |---|---|---|---|
-| 1 | `alex_nolemat_lowhull` | Alexandria, LeMat-disjoint, `e_above_hull ≤ 0.1` (249,117 rows) | **Known to survive** — this is the current production checkpoint, public on HF at `rajkumars47/cues-alex-nolemat-lowhull` (not `ckpt_alex_nolemat_lowhull` — that name doesn't resolve). Its training corpus is **not** public under any name checked; see `HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` (`experiments_todo.md`'s Reproducibility section, R3). Ranked #1 in the matrix. |
+| 1 | `alex_nolemat_lowhull` | Alexandria, LeMat-disjoint, `e_above_hull ≤ 0.1` (249,117 rows per the canonical build; see status for the publicly available copy) | **Known to survive** — this is the current production checkpoint, public on HF at `rajkumars47/cues-alex-nolemat-lowhull` (not `ckpt_alex_nolemat_lowhull` — that name doesn't resolve). Its training corpus is now public too (`rajkumars47/data_alex_nolemat_lowhull`, as of 2026-11-09) — but at 225,103 rows, a close approximation, not the exact 249,117-row original; see `HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` (`experiments_todo.md`'s Reproducibility section, R3) for why. Ranked #1 in the matrix. |
 | 2 | `production` (`big_d15`) | MP+Alex+WBM+diel+MAX mix (242,170 rows) | **Known to survive** — this row reused the existing `ckpt_ed_enclight_6_18` checkpoint rather than training a new one for the matrix. Public on HF: `rajkumars47/ckpt_ed_enclight_6_18` / `rajkumars47/data_big_d15`. |
 | 3 | `alex` | Alexandria, unfiltered (250,010 rows) | Not confirmed either way — audit first |
 | 4 | `alex_onhull` | Alexandria, `e_above_hull ≤ 0` (174,986 rows) | Not confirmed — audit first |

@@ -32,7 +32,7 @@ as stale until fixed.** Ordered within each label by ascending cost
 | 7 | A4 — GNoME cross-source augmentation | Nice-to-have | Augmentation gain confounded with corpus size | — |
 | 8 | A2 — corpus-size floor | Nice-to-have | Size floor confounded with other training-recipe differences | — |
 | 9 | C1 — diffusion-vs-transformer comparison | Nice-to-have | Original in-house comparison unrecoverable — not recommended to pursue | Run: [`HANDOFF_DIFFUSION_REPRO.md`](HANDOFF_DIFFUSION_REPRO.md) |
-| 10 | R3 — production corpus publication | Reproducibility | Training corpus never published — **blocked on a pending maintainer decision**, see the doc | Run: [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md) |
+| — | R3 — production corpus publication | **Resolved, 2026-11-09** | Training corpus is now public (`rajkumars47/data_alex_nolemat_lowhull`) — no action needed | [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md) |
 | 11 | R2 — DPO novelty experiment | Reproducibility | A designed DPO experiment was started but never finished | Run: [`HANDOFF_DPO_NOVELTY.md`](HANDOFF_DPO_NOVELTY.md) |
 | 12 | R1 — NxN checkpoint audit | Reproducibility | 8 of 10 NxN-matrix checkpoints never individually audited for survival | Run: [`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](HANDOFF_CHECKPOINT_RECONSTRUCTION.md) |
 | 13 | R4 — ablation checkpoints | Reproducibility | Build-order/scratchpad-field ablation checkpoints never audited | Run: [`HANDOFF_TARGET_ABLATION_REPRO.md`](HANDOFF_TARGET_ABLATION_REPRO.md) |
@@ -85,14 +85,15 @@ public mirror of that section.
 
 | Tracked as | Gap | Docs |
 |---|---|---|
-| R3 | The production checkpoint's own training corpus was never published, and one checkpoint citation in this repo pointed to the wrong HF repo name | [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md) |
 | R2 | A second DPO experiment (targeting generation novelty) was designed and partially run but never completed to a citable result | [`HANDOFF_DPO_NOVELTY.md`](HANDOFF_DPO_NOVELTY.md) |
 | R1 | The NxN data-ablation matrix's underlying checkpoints, and several exemplar-steering/composition-fidelity numbers, rest on checkpoints with no surviving weights | [`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](HANDOFF_CHECKPOINT_RECONSTRUCTION.md) |
 | R4 | The build-order (§9.4) and scratchpad-field (§9.5) ablations rest on dedicated checkpoints never individually audited for survival | [`HANDOFF_TARGET_ABLATION_REPRO.md`](HANDOFF_TARGET_ABLATION_REPRO.md) |
 
-R3 is the cheapest entry in this entire repo — no training or retraining at
-all, just a filter script already specified elsewhere in this repo and two
-corrected citations.
+**R3 is resolved, 2026-11-09** — the production corpus is now public
+(`rajkumars47/data_alex_nolemat_lowhull`, an honestly-labeled 225,103-row
+approximation of the original 249,117-row build). See
+[`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md)
+for the full record; nothing left to pick up here.
 
 ## Running an experiment
 
@@ -129,9 +130,8 @@ Every item in the Nice-to-have and Reproducibility tables, except C2/C3
 scaffolding, not less honesty) — each states its own priority, exactly
 what's missing, and either a ready-to-run recipe or an honest statement of
 what engineering would need to exist first.
-`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` (R3) is the cheapest thing in
-this entire repo to pick up — no training, no retraining, not even a
-measurement re-run, just a filter script and two citation fixes.
-`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`'s "Part B" (part of R1) is the next
-cheapest: no training at all, just re-running existing measurements on a
+R3 (`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`) was the cheapest thing in
+this entire repo to pick up — resolved 2026-11-09, nothing left there.
+`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`'s "Part B" (part of R1) is now the
+cheapest open item: no training at all, just re-running existing measurements on a
 checkpoint that already exists.

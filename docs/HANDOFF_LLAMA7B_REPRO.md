@@ -75,13 +75,16 @@ engineering project in its own right, separate from any GPU-hours question.
 
 A fine-tuned 7-8B-class model, evaluated with this project's own
 screening/scoring pipeline, on the production corpus used elsewhere in this
-paper. **Note:** that corpus (`alex_nolemat_lowhull`) is not currently
-public under any HF repo name — `rajkumars47/data_alex_nolemat_lowhull`
-exists but is private; see `experiments_todo.md`'s Reproducibility section
-(R3) / `HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md` for the fix. Until that's closed,
-use the public `rajkumars47/data_big_d15` instead (the corpus behind
-`ckpt_autolabel_v1_binrho_k7`/`ckpt_ed_enclight_6_18`) for an equivalent,
-currently-obtainable comparison, and note the substitution in your report.
+paper. **Note:** that corpus (`alex_nolemat_lowhull`) is now public —
+`rajkumars47/data_alex_nolemat_lowhull`, as of 2026-11-09 — but at 225,103
+rows, a close approximation rather than the exact 249,117-row original used
+to train the production checkpoint (see that repo's own README, or
+`experiments_todo.md`'s Reproducibility section R3, for why). Either use it
+as-is and note the approximation, or substitute the public
+`rajkumars47/data_big_d15` instead (the corpus behind
+`ckpt_autolabel_v1_binrho_k7`/`ckpt_ed_enclight_6_18`) if an exact match to a
+production checkpoint's own training file matters more than corpus choice,
+noting the substitution in your report.
 Reporting at minimum:
 
 - **Parseability rate** — fraction of generations that parse into a valid
