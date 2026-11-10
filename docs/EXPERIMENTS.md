@@ -26,21 +26,29 @@ as stale until fixed.** Ordered within each label by ascending cost
 | 1 | §10 near-equilibrium rebuild | **Must** | Only published number traces to a superseded checkpoint, never rebuilt on the current one | Run: [`HANDOFF_NEAR_EQUILIBRIUM_REBUILD.md`](HANDOFF_NEAR_EQUILIBRIUM_REBUILD.md) |
 | 2 | A5 — corpus breadth (wide vs. stability-filtered) | **Must** | The one direct wide-vs-narrow test was withdrawn as a measurement artifact; the claim rests on indirect evidence only | Design: [`A5_wide_vs_narrow_corpus_design.md`](A5_wide_vs_narrow_corpus_design.md) · Run: [`HANDOFF_A5.md`](HANDOFF_A5.md) |
 | 3 | C4 — Llama-7B fine-tune failure | **Must** | Informal, unquantified account; no shared eval pipeline, no numbers | Run: [`HANDOFF_LLAMA7B_REPRO.md`](HANDOFF_LLAMA7B_REPRO.md) |
-| 4 | A3 — curation vs. volume | Nice-to-have | Curation-beats-volume claim entangled with a novelty-reference artifact | — |
-| 5 | B10/C8 — residual corpus-content difference | Nice-to-have | A checked but not fully cleared caveat on one architecture comparison | — |
+| 4 | A3 — curation vs. volume | Nice-to-have | Curation-beats-volume claim entangled with a novelty-reference artifact | Run: [`HANDOFF_A3_NOVELTY_REANALYSIS.md`](HANDOFF_A3_NOVELTY_REANALYSIS.md) |
+| 5 | B10/C8 — residual corpus-content difference | Nice-to-have | A checked but not fully cleared caveat on one architecture comparison | — (already closed; see note below the table) |
 | 6 | C2/C3 — architecture ablation | Nice-to-have | Decoder-only-vs-12+12 direction disagreement, between two baselines this paper doesn't recommend | Design: [`dec_only_17L_replication_design.md`](dec_only_17L_replication_design.md) · Run: [`HANDOFF_C2_C3.md`](HANDOFF_C2_C3.md) |
-| 7 | A4 — GNoME cross-source augmentation | Nice-to-have | Augmentation gain confounded with corpus size | — |
-| 8 | A2 — corpus-size floor | Nice-to-have | Size floor confounded with other training-recipe differences | — |
+| 7 | A4 — GNoME cross-source augmentation | Nice-to-have | Augmentation gain confounded with corpus size | Run: [`HANDOFF_A4_GNOME_MATCHED_SIZE.md`](HANDOFF_A4_GNOME_MATCHED_SIZE.md) |
+| 8 | A2 — corpus-size floor | Nice-to-have | Size floor confounded with other training-recipe differences | Run: [`HANDOFF_A2_CORPUS_SIZE_FLOOR.md`](HANDOFF_A2_CORPUS_SIZE_FLOOR.md) |
 | 9 | C1 — diffusion-vs-transformer comparison | Nice-to-have | Original in-house comparison unrecoverable — not recommended to pursue | Run: [`HANDOFF_DIFFUSION_REPRO.md`](HANDOFF_DIFFUSION_REPRO.md) |
-| 10 | C10 — `encoder_lr_scale` calibration | Nice-to-have | `ed_train.py` warns the default may be miscalibrated for `ed_lite`'s token ratio; never checked whether it matters | — |
+| 10 | C10 — `encoder_lr_scale` calibration | Nice-to-have | `ed_train.py` warns the default may be miscalibrated for `ed_lite`'s token ratio; never checked whether it matters | — (not ready yet; see note below the table) |
 | — | R3 — production corpus publication | **Resolved, 2026-11-09** | Training corpus is now public (`rajkumars47/data_alex_nolemat_lowhull`) — no action needed | [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md) |
 | 11 | R2 — DPO novelty experiment | Reproducibility | A designed DPO experiment was started but never finished | Run: [`HANDOFF_DPO_NOVELTY.md`](HANDOFF_DPO_NOVELTY.md) |
 | 12 | R1 — NxN checkpoint audit | Reproducibility | 8 of 10 NxN-matrix checkpoints never individually audited for survival | Run: [`HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](HANDOFF_CHECKPOINT_RECONSTRUCTION.md) |
 | 13 | R4 — ablation checkpoints | Reproducibility | Build-order/scratchpad-field ablation checkpoints never audited | Run: [`HANDOFF_TARGET_ABLATION_REPRO.md`](HANDOFF_TARGET_ABLATION_REPRO.md) |
 
-Items 4, 5, 7, 8, 10 have no handoff doc yet (lower priority, nothing's been
-packaged) — see `experiments_todo.md`'s own entries for their next steps if
-you want to pick one up anyway.
+**Items 5 and 10 deliberately have no handoff doc, and that's not an
+oversight.** #5 (B10/C8) is already closed — `experiments_todo.md`'s own
+entry says "none needed before submission; would only matter if a reviewer
+specifically presses on it," so there's no plan to package. #10 (C10) is a
+free, five-minute check (read existing training logs/configs for whether
+`--encoder_lr_scale` was ever set) that should happen *before* anyone
+decides whether the GPU-rerun half is even needed — `experiments_todo.md`
+says so explicitly ("a dedicated `HANDOFF_*.md` isn't warranted until it's
+known whether step 2 is even needed"). Writing a handoff doc for either
+would front-run a call the tracker already made on purpose. Items 4, 7, and
+8 now have handoff docs (added 2026-11-09, see the table above).
 
 ## Must — real, stated paper limitations
 
@@ -67,13 +75,13 @@ the fact.
 
 | Gap | Docs |
 |---|---|
-| Curation-vs-volume claim entangled with a novelty-reference artifact | — (see `experiments_todo.md` A3) |
-| A checked-but-not-fully-cleared corpus-content caveat | — (see `experiments_todo.md` B10/C8) |
+| Curation-vs-volume claim entangled with a novelty-reference artifact | [`HANDOFF_A3_NOVELTY_REANALYSIS.md`](HANDOFF_A3_NOVELTY_REANALYSIS.md) |
+| A checked-but-not-fully-cleared corpus-content caveat. **No handoff doc on purpose** — `experiments_todo.md`'s B10/C8 entry already says no further action is needed before submission. | — (see `experiments_todo.md` B10/C8) |
 | Decoder-only-vs-12+12 direction disagreement, between two baselines this paper doesn't recommend. **Downgraded from Must, 2026-11-04** — resolving it either way doesn't change the paper's argument, and it was removed from `limitations.md` on 2026-11-08 for exactly that reason. | Design: [`dec_only_17L_replication_design.md`](dec_only_17L_replication_design.md) · Run: [`HANDOFF_C2_C3.md`](HANDOFF_C2_C3.md) |
-| GNoME augmentation gain confounded with corpus size | — (see `experiments_todo.md` A4) |
-| Corpus-size floor confounded with other training-recipe differences | — (see `experiments_todo.md` A2) |
+| GNoME augmentation gain confounded with corpus size | [`HANDOFF_A4_GNOME_MATCHED_SIZE.md`](HANDOFF_A4_GNOME_MATCHED_SIZE.md) |
+| Corpus-size floor confounded with other training-recipe differences | [`HANDOFF_A2_CORPUS_SIZE_FLOOR.md`](HANDOFF_A2_CORPUS_SIZE_FLOOR.md) |
 | Original in-house diffusion-vs-transformer comparison is unrecoverable (no surviving checkpoints/data). **Removed from `limitations.md`, 2026-11-08** for the same reason as above — the design decision is otherwise well-evidenced. | Run: [`HANDOFF_DIFFUSION_REPRO.md`](HANDOFF_DIFFUSION_REPRO.md) |
-| `ed_train.py`'s own runtime warning flags that `--encoder_lr_scale` (default 1.0, never set by `train_arm.sh`) may be miscalibrated for `ed_lite`'s ~13x target/source token ratio (it suggests 0.27). Whether this affected the production checkpoint or any published number has never been checked. **Added 2026-11-09.** | — (see `experiments_todo.md` C10) |
+| `ed_train.py`'s own runtime warning flags that `--encoder_lr_scale` (default 1.0, never set by `train_arm.sh`) may be miscalibrated for `ed_lite`'s ~13x target/source token ratio (it suggests 0.27). Whether this affected the production checkpoint or any published number has never been checked. **Added 2026-11-09. No handoff doc yet on purpose** — `experiments_todo.md`'s C10 entry says a free log/config check should settle whether the GPU half is even needed, before packaging anything. | — (see `experiments_todo.md` C10) |
 
 ## Reproducibility — artifact availability, not an evidentiary gap
 
@@ -96,6 +104,22 @@ public mirror of that section.
 approximation of the original 249,117-row build). See
 [`HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md`](HANDOFF_PRODUCTION_CORPUS_PUBLICATION.md)
 for the full record; nothing left to pick up here.
+
+## Reporting results and uploading checkpoints — read this before you start
+
+Every experiment here ends the same way: fork + PR preferred, a relayed
+plain-markdown report as fallback, and checkpoints/large files to your own
+Hugging Face account (never into a git branch or PR). **If you don't have
+your own HF account and don't want to set one up, ask the maintainer for a
+token** — they'll mint a write-only, single-repo-scoped token
+(`rajkumars47/cues-contrib-dropbox`) and send it to you; `export
+HF_TOKEN=<it>` and upload there instead of your own account, same
+`huggingface_hub.upload_folder`/`upload_file` calls. Full detail —
+including why `repo_type="dataset"` must be passed explicitly, and that this
+token is shared and temporary, not yours alone — is in
+[`../SETUP.md`](../SETUP.md) §6, "Report results back." Read that section
+once before launching anything, not after you already have results sitting
+on disk with nowhere documented to put them.
 
 ## Running an experiment
 

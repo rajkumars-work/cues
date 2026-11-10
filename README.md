@@ -10,40 +10,33 @@ as the CUES paper is the sibling of the steering paper. See
 repo is trying to meet.
 
 **Running this as a real experiment (not just trying it out)?** Start at
-[`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) — it indexes every experiment
-hosted here (both the ones the paper's thesis depends on, and lower-priority
-nice-to-have reconstructions), each cross-referenced to the specific paper
-limitation it resolves, and links to that experiment's own handoff doc with
-the full launch, scoring, and results-reporting instructions.
+[`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md) — the full, current index of
+every experiment hosted here, labeled **Must** (a real, stated paper
+limitation), **Nice-to-have** (a genuine but secondary evidentiary gap), or
+**Reproducibility** (not an evidentiary gap at all, just artifact
+availability or unfinished work). That page is the source of truth for
+what's here and why — this README doesn't duplicate its full list, to avoid
+the two drifting apart as items get added, resolved, or re-labeled.
 
-Currently hosted here:
+The two full train-from-scratch experiments, with their own design docs:
 
-- **C2/C3 — architecture ablation.** A from-scratch, matched-methodology
-  retrain of three architecture points on the same corpus:
-  - **ed_control** — encoder-decoder, naive 12 encoder + 12 decoder layers
-  - **ed_lite** — encoder-decoder, asymmetric 6 encoder + 18 decoder layers
-    (the configuration the paper recommends)
-  - **dec_only** — decoder-only, 17 layers, edim=1024
+- **C2/C3 — architecture ablation** (Nice-to-have). A from-scratch,
+  matched-methodology retrain of three architecture points on the same
+  corpus — `ed_control` (12+12), `ed_lite` (6+18, the paper's
+  recommendation), `dec_only` (17 layers, decoder-only).
 
   Background: [`docs/dec_only_17L_replication_design.md`](docs/dec_only_17L_replication_design.md).
   Run it: [`docs/HANDOFF_C2_C3.md`](docs/HANDOFF_C2_C3.md).
 
-- **A5 — corpus ablation.** Wide vs. stability-filtered training corpus,
-  architecture held fixed at `ed_lite`.
+- **A5 — corpus ablation** (Must — `limitations.md` item 2). Wide vs.
+  stability-filtered training corpus, architecture held fixed at `ed_lite`.
 
   Background: [`docs/A5_wide_vs_narrow_corpus_design.md`](docs/A5_wide_vs_narrow_corpus_design.md).
   Run it: [`docs/HANDOFF_A5.md`](docs/HANDOFF_A5.md).
 
-- **Four nice-to-have reconstructions** (low priority — none of these block
-  the paper's thesis, see `docs/REPRODUCIBILITY.md`): the NxN data-ablation
-  matrix's underlying checkpoints plus other lost-checkpoint evidence
-  ([`docs/HANDOFF_CHECKPOINT_RECONSTRUCTION.md`](docs/HANDOFF_CHECKPOINT_RECONSTRUCTION.md)),
-  the abandoned in-house diffusion lineage
-  ([`docs/HANDOFF_DIFFUSION_REPRO.md`](docs/HANDOFF_DIFFUSION_REPRO.md)), the
-  informal large-model fine-tuning account
-  ([`docs/HANDOFF_LLAMA7B_REPRO.md`](docs/HANDOFF_LLAMA7B_REPRO.md)), and an
-  incomplete DPO-for-novelty experiment
-  ([`docs/HANDOFF_DPO_NOVELTY.md`](docs/HANDOFF_DPO_NOVELTY.md)).
+Everything else — including the other two Must items, every Nice-to-have
+reconstruction, and the Reproducibility-tier artifact-availability gaps —
+is listed in [`docs/EXPERIMENTS.md`](docs/EXPERIMENTS.md), not here.
 
 ## What's here vs. what's in `steering`
 
