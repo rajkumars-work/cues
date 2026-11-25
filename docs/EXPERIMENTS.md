@@ -27,6 +27,7 @@ as stale until fixed.** Ordered within each label by ascending cost
 | 2 | A5 — corpus breadth (wide vs. stability-filtered) | **Must** | The one direct wide-vs-narrow test was withdrawn as a measurement artifact; the claim rests on indirect evidence only | Design: [`A5_wide_vs_narrow_corpus_design.md`](A5_wide_vs_narrow_corpus_design.md) · Run: [`HANDOFF_A5.md`](HANDOFF_A5.md) |
 | 3 | C4 — Llama-7B fine-tune failure | **Must** | Informal, unquantified account; no shared eval pipeline, no numbers | Run: [`HANDOFF_LLAMA7B_REPRO.md`](HANDOFF_LLAMA7B_REPRO.md) |
 | 4 | A3 — curation vs. volume | Nice-to-have | Curation-beats-volume claim entangled with a novelty-reference artifact | Run: [`HANDOFF_A3_NOVELTY_REANALYSIS.md`](HANDOFF_A3_NOVELTY_REANALYSIS.md) |
+| — | Frontier-model (Kimi) fine-tuning comparison | Nice-to-have | New question the paper doesn't address at all — added 2026-11-25, not yet in `experiments_todo.md` | Run: [`HANDOFF_KIMI_FRONTIER_REPRO.md`](HANDOFF_KIMI_FRONTIER_REPRO.md) |
 | 5 | B10/C8 — residual corpus-content difference | Nice-to-have | A checked but not fully cleared caveat on one architecture comparison | — (already closed; see note below the table) |
 | 6 | C2/C3 — architecture ablation | Nice-to-have | Decoder-only-vs-12+12 direction disagreement, between two baselines this paper doesn't recommend | Design: [`dec_only_17L_replication_design.md`](dec_only_17L_replication_design.md) · Run: [`HANDOFF_C2_C3.md`](HANDOFF_C2_C3.md) |
 | 7 | A4 — GNoME cross-source augmentation | Nice-to-have | Augmentation gain confounded with corpus size | Run: [`HANDOFF_A4_GNOME_MATCHED_SIZE.md`](HANDOFF_A4_GNOME_MATCHED_SIZE.md) |
@@ -76,6 +77,7 @@ the fact.
 | Gap | Docs |
 |---|---|
 | Curation-vs-volume claim entangled with a novelty-reference artifact | [`HANDOFF_A3_NOVELTY_REANALYSIS.md`](HANDOFF_A3_NOVELTY_REANALYSIS.md) |
+| The Llama-7B-class fine-tuning account (above, Must #3) only covers a ~7-8B-class model — the paper says nothing about how a current frontier-scale open model (Kimi, Muse) does on this task, in either direction | [`HANDOFF_KIMI_FRONTIER_REPRO.md`](HANDOFF_KIMI_FRONTIER_REPRO.md) |
 | A checked-but-not-fully-cleared corpus-content caveat. **No handoff doc on purpose** — `experiments_todo.md`'s B10/C8 entry already says no further action is needed before submission. | — (see `experiments_todo.md` B10/C8) |
 | Decoder-only-vs-12+12 direction disagreement, between two baselines this paper doesn't recommend. **Downgraded from Must, 2026-11-04** — resolving it either way doesn't change the paper's argument, and it was removed from `limitations.md` on 2026-11-08 for exactly that reason. | Design: [`dec_only_17L_replication_design.md`](dec_only_17L_replication_design.md) · Run: [`HANDOFF_C2_C3.md`](HANDOFF_C2_C3.md) |
 | GNoME augmentation gain confounded with corpus size | [`HANDOFF_A4_GNOME_MATCHED_SIZE.md`](HANDOFF_A4_GNOME_MATCHED_SIZE.md) |
